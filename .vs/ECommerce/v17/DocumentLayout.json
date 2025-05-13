@@ -1,0 +1,214 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Pg\\Programming\\WebDev\\ECommerce\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\entities\\inventorylog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\entities\\inventorylog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\services\\itemdetailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\services\\itemdetailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\services\\itemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\services\\itemservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\dto\\response\\itemdetailreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\response\\itemdetailreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\dto\\response\\inventorylogreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\response\\inventorylogreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\ecommercedbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\ecommercedbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\entities\\item.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\entities\\item.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 200,
+          "SelectedChildIndex": 19,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ItemService.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\ItemService.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Services\\ItemService.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\ItemService.cs",
+              "RelativeToolTip": "ECommerce.Server\\Services\\ItemService.cs",
+              "ViewState": "AgIAAJsAAAAAAAAAAAAswJMAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-12T11:10:27.595Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ItemDetailService.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\ItemDetailService.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Services\\ItemDetailService.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\ItemDetailService.cs",
+              "RelativeToolTip": "ECommerce.Server\\Services\\ItemDetailService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-12T11:10:19.291Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ItemDetailReadDto.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\ItemDetailReadDto.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\DTO\\Response\\ItemDetailReadDto.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\ItemDetailReadDto.cs",
+              "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Response\\ItemDetailReadDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-12T11:09:17.684Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "InventoryLogReadDto.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\InventoryLogReadDto.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\DTO\\Response\\InventoryLogReadDto.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\InventoryLogReadDto.cs",
+              "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Response\\InventoryLogReadDto.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAA5wAwAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-12T11:06:49.974Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "InventoryLog.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\Entities\\InventoryLog.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\Entities\\InventoryLog.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\Entities\\InventoryLog.cs",
+              "RelativeToolTip": "ECommerce.Server\\Data\\Entities\\InventoryLog.cs",
+              "ViewState": "AgIAACsAAAAAAAAAAAAcwAsAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-12T11:01:34.11Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "EcommerceDbContext.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\EcommerceDbContext.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\EcommerceDbContext.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\EcommerceDbContext.cs",
+              "RelativeToolTip": "ECommerce.Server\\Data\\EcommerceDbContext.cs",
+              "ViewState": "AgIAADsAAAAAAAAAAAAmwE4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-12T03:45:17.712Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Item.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\Entities\\Item.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\Entities\\Item.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\Entities\\Item.cs",
+              "RelativeToolTip": "ECommerce.Server\\Data\\Entities\\Item.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAwwCMAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-12T03:43:34.684Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Program.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Program.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Program.cs",
+              "RelativeToolTip": "ECommerce.Server\\Program.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAADcAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-12T03:28:59.936Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedHeight": 200,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
