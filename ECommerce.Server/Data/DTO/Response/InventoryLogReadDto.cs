@@ -1,6 +1,5 @@
 ﻿// File: Data/DTO/Response/InventoryLogReadDto.cs
 using System;
-
 namespace ECommerce.Server.Data.DTO.Response
 {
     public class InventoryLogReadDto
@@ -9,7 +8,7 @@ namespace ECommerce.Server.Data.DTO.Response
         public int ItemID { get; set; }
         public string ItemName { get; set; }
         public int? ItemDetailID_Transaction { get; set; }
-        public string? ItemDetailCode { get; set; }
+        public string? ItemDetailCode { get; set; } // Code from ItemDetail
         public int UserID { get; set; }
         public string Username { get; set; }
         public DateTime Timestamp { get; set; }
@@ -21,6 +20,5 @@ namespace ECommerce.Server.Data.DTO.Response
         public int QuantityInBaseUnits { get; set; }
         public decimal? CostPricePerBaseUnit { get; set; }
         public decimal? SalePricePerTransactedUnit { get; set; }
-        public string? Notes { get; set; }
     }
 }

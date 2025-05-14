@@ -14,13 +14,13 @@ namespace ECommerce.Server.Data.Entities
         [Required]
         public int ItemID { get; set; }
 
-        public int? ItemDetailID_Transaction { get; set; } // Nullable Foreign Key
+        public int? ItemDetailID_Transaction { get; set; }
 
         [Required]
-        public int UserID { get; set; }
+        public int UserID { get; set; } // Assumes Users.Id is INT
 
         [Required]
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow; // Default value in C#
+        public DateTime Timestamp { get; set; } // EF Core handles DATETIME vs DATETIME2 mapping
 
         [Required]
         [StringLength(30)]
@@ -34,10 +34,10 @@ namespace ECommerce.Server.Data.Entities
         public int UnitIDTransacted { get; set; }
 
         [Required]
-        public int ConversionFactorApplied { get; set; } // As per your SQL INT type
+        public int ConversionFactorApplied { get; set; } // As per your SQL (INT)
 
         [Required]
-        public int QuantityInBaseUnits { get; set; } // As per your SQL INT type
+        public int QuantityInBaseUnits { get; set; } // As per your SQL (INT)
 
         [Column(TypeName = "money")]
         public decimal? CostPricePerBaseUnit { get; set; }
@@ -45,20 +45,20 @@ namespace ECommerce.Server.Data.Entities
         [Column(TypeName = "money")]
         public decimal? SalePricePerTransactedUnit { get; set; }
 
-        [StringLength(500)] // Assuming you add a Notes column to your SQL
-        public string? Notes { get; set; }
+        [StringLength(500)]
+        public string? Notes { get; set; } // Recommended: Add to your SQL table
 
         // Navigation properties
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }
 
         [ForeignKey("ItemDetailID_Transaction")]
-        public virtual ItemDetail? ItemDetail { get; set; } // Associated ItemDetail for the transaction
+        public virtual ItemDetail? ItemDetail { get; set; }
 
         [ForeignKey("UserID")]
-        public virtual User User { get; set; } // User who performed the transaction
+        public virtual User User { get; set; }
 
         [ForeignKey("UnitIDTransacted")]
-        public virtual Unit TransactedUnit { get; set; } // Unit used in the transaction
+        public virtual Unit TransactedUnit { get; set; }
     }
 }

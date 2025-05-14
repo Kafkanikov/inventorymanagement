@@ -79,33 +79,35 @@ namespace ECommerce.Server.Data
 
             modelBuilder.Entity<InventoryLog>(entity =>
             {
-                entity.Property(e => e.Timestamp).HasDefaultValueSql("GETUTCDATE()"); // Matches SQL default if you prefer UTC
+                // SQL default for Timestamp is GETDATE(). EF Core can also set default.
+                // If using Database-First or matching existing schema, SQL default is fine.
+                // If Code-First leading, you might set default here or in entity constructor/service.
+                entity.Property(e => e.Timestamp)
+                    .HasDefaultValueSql("GETUTCDATE()"); // Or GETDATE() if not UTC focus
 
-                // Foreign Key relationships (EF Core might infer these, but explicit is clearer)
                 entity.HasOne(d => d.Item)
-                    .WithMany(p => p.InventoryLogs) // Assumes ICollection<InventoryLog> in Item.cs
+                    .WithMany(p => p.InventoryLogs)
                     .HasForeignKey(d => d.ItemID)
-                    .OnDelete(DeleteBehavior.NoAction); // Or Restrict, to prevent Item deletion if logs exist
+                    .OnDelete(DeleteBehavior.NoAction); // Or Restrict
 
                 entity.HasOne(d => d.ItemDetail)
-                    .WithMany() // Assuming ItemDetail does not have a direct collection of InventoryLogs
+                    .WithMany() // No inverse navigation property in ItemDetail in our current model
                     .HasForeignKey(d => d.ItemDetailID_Transaction)
+                    .IsRequired(false) // Corresponds to ItemDetailID_Transaction INT NULL
                     .OnDelete(DeleteBehavior.NoAction); // Or Restrict
 
                 entity.HasOne(d => d.User)
-                    .WithMany() // Or .WithMany(p => p.InventoryLogs) if User has a collection
+                    .WithMany() // No inverse navigation property in User in our current model
                     .HasForeignKey(d => d.UserID)
                     .OnDelete(DeleteBehavior.NoAction); // Or Restrict
 
                 entity.HasOne(d => d.TransactedUnit)
-                    .WithMany() // Or .WithMany(p => p.InventoryLogs) if Unit has a collection
+                    .WithMany() // No inverse navigation property in Unit in our current model
                     .HasForeignKey(d => d.UnitIDTransacted)
                     .OnDelete(DeleteBehavior.NoAction); // Or Restrict
 
-                // Note: Your SQL CHECK constraints are database-level.
-                // EF Core doesn't translate them directly into C# validation attributes
-                // but will respect them during SaveChanges (DB will throw error if violated).
-                // Service layer logic should enforce these rules before saving.
+                // Note: Your SQL CHECK constraints will be enforced by the database.
+                // Service layer should validate before attempting to save.
             });
 
         }
