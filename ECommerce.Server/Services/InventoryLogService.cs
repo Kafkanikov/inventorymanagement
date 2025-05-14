@@ -46,25 +46,26 @@ namespace ECommerce.Server.Services
                 QuantityInBaseUnits = log.QuantityInBaseUnits,
                 CostPricePerBaseUnit = log.CostPricePerBaseUnit,
                 SalePricePerTransactedUnit = log.SalePricePerTransactedUnit
-                // Notes = log.Notes // REMOVED THIS LINE
             };
         }
 
         public async Task<InventoryLogReadDto?> CreateManualLogEntryAsync(InventoryLogCreateDto logDto, int performingUserId) // Modified
         {
-            // ... (validation logic for ItemID, UnitIDTransacted, TransactionType, pricing etc. remains the same) ...
             if (logDto.TransactionType == "Purchase" || logDto.TransactionType == "Sale")
             {
+                Console.WriteLine("Hi");
                 return null;
             }
             if (logDto.QuantityTransacted == 0)
             {
+                Console.WriteLine("Hello");
                 return null;
             }
 
             var item = await _context.Items
                                      .Include(i => i.BaseUnit)
                                      .FirstOrDefaultAsync(i => i.ID == logDto.ItemID && !i.Disabled);
+
             if (item == null) return null;
 
             var transactedUnit = await _context.Units.FirstOrDefaultAsync(u => u.ID == logDto.UnitIDTransacted && !u.Disabled);
@@ -144,7 +145,6 @@ namespace ECommerce.Server.Services
                 QuantityInBaseUnits = quantityInBaseUnits,
                 CostPricePerBaseUnit = costPrice,
                 SalePricePerTransactedUnit = salePrice
-                // Notes = logDto.Notes // REMOVED THIS LINE
             };
 
             _context.InventoryLogs.Add(inventoryLogEntry);

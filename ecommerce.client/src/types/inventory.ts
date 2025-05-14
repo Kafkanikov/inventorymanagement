@@ -151,6 +151,68 @@ export interface ItemDetailUpdateDto {
   conversionFactor: number;
   price?: number | null;
 }
+
+////////////Inventory Log///////////////////////
+export interface InventoryLogReadDto { // Based on your ECommerce.Server/Data/DTO/Response/InventoryLogReadDto.cs
+  logID: number;
+  itemID: number;
+  itemName: string;
+  itemDetailID_Transaction?: number | null;
+  itemDetailCode?: string | null;
+  userID: number;
+  username: string;
+  timestamp: string; // Assuming DateTime is serialized as string
+  transactionType: string;
+  quantityTransacted: number;
+  unitIDTransacted: number;
+  transactedUnitName: string;
+  conversionFactorApplied: number;
+  quantityInBaseUnits: number;
+  costPricePerBaseUnit?: number | null;
+  salePricePerTransactedUnit?: number | null;
+}
+
+export interface InventoryLogWriteDto {
+  itemID: number;
+  itemDetailID_Transaction?: number | null;
+  transactionType: string;
+  quantityTransacted: number;
+  unitIDTransacted: number;
+  costPricePerBaseUnit?: number | null;
+  salePricePerTransactedUnit?: number | null;
+}
+export interface InventoryLogQueryParametersDto {
+  itemID?: number | null;       
+  userID?: number | null;    
+  transactionType?: string | null; 
+  startDate?: string | null;    
+  endDate?: string | null;   
+
+  pageNumber?: number;         
+  pageSize?: number;      
+}
+
+// You might also need these for dropdowns in the form
+export interface ItemSelection {
+  id: number;
+  name: string;
+  baseUnitID: number;
+  baseUnitName?: string; // Helpful for display
+  itemDetails?: ItemDetailSelection[]; // Array of available packaging/units for this item
+}
+
+export interface ItemDetailSelection {
+  id: number; // ItemDetail ID
+  code: string;
+  unitID: number;
+  unitName: string;
+  conversionFactor: number;
+}
+
+export interface UnitSelection {
+  id: number;
+  name: string;
+}
   
 //////////////////////////////////////////////////////////////////////////
 // Generic type for any item that has an ID

@@ -71,10 +71,10 @@ namespace ECommerce.Server.Controllers
             {
                 return BadRequest(new { message = "Purchase and Sale logs are created automatically by database triggers. Use this endpoint for other transaction types like adjustments." });
             }
-
+            
             // 3. Call the service, passing the authenticated UserID
             var createdLogDto = await _inventoryLogService.CreateManualLogEntryAsync(logCreateDto, performingUserId);
-
+            
             if (createdLogDto == null)
             {
                 // The service returning null could mean various validation failures (invalid ItemID, UnitID, pricing issues, conversion factor problems, etc.)

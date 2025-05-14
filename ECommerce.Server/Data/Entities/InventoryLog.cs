@@ -45,9 +45,6 @@ namespace ECommerce.Server.Data.Entities
         [Column(TypeName = "money")]
         public decimal? SalePricePerTransactedUnit { get; set; }
 
-        [StringLength(500)]
-        public string? Notes { get; set; } // Recommended: Add to your SQL table
-
         // Navigation properties
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }

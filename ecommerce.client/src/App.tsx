@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { DashboardLayout } from './components/dashboard/DashboardLayout';
-import { InventoryView } from './components/dashboard/views/InventoryView';
+import { InventoryLogView } from './components/dashboard/views/InventoryLogView';
 import { PurchaseView } from './components/dashboard/views/PurchaseView';
 import { SaleView } from './components/dashboard/views/SaleView';
 import { CategoryManagementForm } from './components/dashboard/forms/CategoryManagementForm';
@@ -131,7 +131,7 @@ function AppContent() {
             }
           >
             <Route index element={<Navigate to="inventory" replace />} /> {/* Default to inventory */}
-            <Route path="inventory" element={<InventoryView />} />
+            <Route path="inventory" element={<InventoryLogView />} />
             <Route path="purchases" element={<PurchaseView />} />
             <Route path="sales" element={<SaleView />} />
             <Route path="add"> {/* No element needed for parent 'add' if it's just a grouping */}

@@ -16,7 +16,7 @@ import {
   LayoutDashboard, // For a general dashboard link
   Warehouse,
   User,
-  Scale
+  Scale,
 } from 'lucide-react';
 import { cn } from '@/lib/utils'; // from shadcn
 import { useAuth } from '@/contexts/AuthContext';
@@ -93,12 +93,13 @@ export const Sidebar: React.FC = () => {
                 <NavItem to="/dashboard/add/category" icon={Tag} label="Category" isSubItem />
                 <NavItem to="/dashboard/add/unit" icon={Scale} label="Unit" isSubItem />
                 <NavItem to="/dashboard/add/item" icon={PackagePlus} label="Item" isSubItem />
-                {isAdmin && <NavItem to="/dashboard/add/user" icon={User} label="User" isSubItem /> }
+                {isAdmin && <>
+                <NavItem to="/dashboard/add/user" icon={User} label="User" isSubItem /> 
+                </>}
               </CollapsibleContent>
             </Collapsible>
           </nav>
         </div>
-        {/* Optional: Footer in sidebar */}
       </div>
     </aside>
   );
