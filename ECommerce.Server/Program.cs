@@ -55,6 +55,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUnitService, UnitService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IItemDetailService, ItemDetailService>();
+builder.Services.AddScoped<>();
 builder.Services.AddOpenApi();
 
 builder.Services.AddEndpointsApiExplorer();
