@@ -12,3 +12,25 @@ Content-Type: application/json
 }
 
 ###
+
+POST {{ECommerce.Server_HostAddress}}/api/accounting/reports/balance-sheet
+Content-Type: application/json
+
+{
+  "asOfDate": "2025-05-24T00:00:00",
+  "reportCurrency": "USD",
+  "khrtoReportCurrencyExchangeRate": 4150
+}
+
+###
+
+POST {{ECommerce.Server_HostAddress}}/api/accounting/reports/simplified-balance-sheet
+Content-Type: application/json
+
+{
+  "asOfDate": "2025-05-23T00:00:00",
+  "reportCurrency": "USD",
+  "khrtoReportCurrencyExchangeRate": 4150
+}
+
+###

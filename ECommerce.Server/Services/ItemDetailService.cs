@@ -18,6 +18,39 @@ namespace ECommerce.Server.Services
         {
             _context = context;
         }
+        private ItemDetailReadDto MapToReadDto(ItemDetail itemDetail, ItemDetailStockViewResult? stockInfo)
+        {
+            return new ItemDetailReadDto
+            {
+                ID = itemDetail.ID,
+                Code = itemDetail.Code,
+                ItemID = itemDetail.ItemID,
+                ItemName = itemDetail.Item?.Name ?? "N/A", // Assumes Item is included if needed elsewhere
+                UnitID = itemDetail.UnitID,
+                UnitName = itemDetail.Unit?.Name ?? "N/A", // Assumes Unit is included
+                DefinedPackageQty = itemDetail.ConversionFactor, // This is ItemDetails.Qty
+                Price = itemDetail.Price,
+                Disabled = itemDetail.Disabled,
+                QuantityOnHand = stockInfo?.QuantityOnHandInItemDetailUnit ?? 0
+            };
+        }
+
+        private ItemDetailReadDto MapToReadDto(ItemDetailStockViewResult stockInfo)
+        {
+            return new ItemDetailReadDto
+            {
+                ID = stockInfo.ItemDetailID,
+                Code = stockInfo.ItemDetailCode,
+                ItemID = stockInfo.ItemID,
+                ItemName = stockInfo.ItemName,
+                UnitID = stockInfo.ItemDetailUnitID,
+                UnitName = stockInfo.ItemDetailUnitName,
+                DefinedPackageQty = stockInfo.DefinedPackageFactor,
+                Price = stockInfo.SellingPrice, // Assuming V_ItemDetailStockOnHand includes ItemDetails.Price
+                Disabled = stockInfo.ItemDetailDisabled, // Or a combination if parent item disabled matters
+                QuantityOnHand = stockInfo.QuantityOnHandInItemDetailUnit
+            };
+        }
 
         private IQueryable<ItemDetail> GetBaseItemDetailQuery()
         {
@@ -28,64 +61,47 @@ namespace ECommerce.Server.Services
 
         public async Task<IEnumerable<ItemDetailReadDto>> GetAllItemDetailsAsync(bool includeDisabled = false)
         {
-            var query = GetBaseItemDetailQuery();
+            var query = _context.ItemDetailStockLevels.AsQueryable(); // Query the view
+
             if (!includeDisabled)
             {
-                query = query.Where(id => !id.Disabled && !id.Item.Disabled && !id.Unit.Disabled); // Also check parent entities
+                // The view itself can have ItemDetailDisabled and ParentItemDisabled
+                query = query.Where(id => !id.ItemDetailDisabled && !id.ParentItemDisabled);
             }
-            return await MapToReadDtos(query.OrderBy(id => id.Item.Name).ThenBy(id => id.Code));
+
+            var stockDetails = await query
+                .OrderBy(s => s.ItemName)
+                .ThenBy(s => s.ItemDetailCode)
+                .ToListAsync();
+
+            return stockDetails.Select(MapToReadDto);
         }
 
         public async Task<IEnumerable<ItemDetailReadDto>> GetItemDetailsByItemIdAsync(int itemId, bool includeDisabled = false)
         {
-            var query = GetBaseItemDetailQuery().Where(id => id.ItemID == itemId);
+            var query = _context.ItemDetailStockLevels.Where(s => s.ItemID == itemId);
+
             if (!includeDisabled)
             {
-                query = query.Where(id => !id.Disabled && !id.Item.Disabled && !id.Unit.Disabled);
+                query = query.Where(id => !id.ItemDetailDisabled && !id.ParentItemDisabled);
             }
-            return await MapToReadDtos(query.OrderBy(id => id.Code));
+
+            var stockDetails = await query
+                .OrderBy(s => s.ItemDetailUnitName)
+                .ToListAsync();
+
+            return stockDetails.Select(MapToReadDto);
         }
 
         public async Task<ItemDetailReadDto?> GetItemDetailByIdAsync(int id)
         {
-            var itemDetail = await GetBaseItemDetailQuery()
-                                   .FirstOrDefaultAsync(detail => detail.ID == id);
-            if (itemDetail == null) return null;
-            return MapToReadDto(itemDetail);
-        }
+            var stockDetailInfo = await _context.ItemDetailStockLevels
+                .FirstOrDefaultAsync(sds => sds.ItemDetailID == id);
 
-        private async Task<List<ItemDetailReadDto>> MapToReadDtos(IQueryable<ItemDetail> query)
-        {
-            return await query.Select(id => new ItemDetailReadDto
-            {
-                ID = id.ID,
-                Code = id.Code,
-                ItemID = id.ItemID,
-                ItemName = id.Item.Name,
-                UnitID = id.UnitID,
-                UnitName = id.Unit.Name,
-                ConversionFactor = id.ConversionFactor,
-                Price = id.Price,
-                Disabled = id.Disabled
-            }).ToListAsync();
-        }
-        private ItemDetailReadDto MapToReadDto(ItemDetail id)
-        {
-            return new ItemDetailReadDto
-            {
-                ID = id.ID,
-                Code = id.Code,
-                ItemID = id.ItemID,
-                ItemName = id.Item.Name, // Assumes Item is loaded
-                UnitID = id.UnitID,
-                UnitName = id.Unit.Name, // Assumes Unit is loaded
-                ConversionFactor = id.ConversionFactor,
-                Price = id.Price,
-                Disabled = id.Disabled
-            };
-        }
+            if (stockDetailInfo == null) return null;
 
-
+            return MapToReadDto(stockDetailInfo);
+        }
         public async Task<ItemDetailReadDto?> CreateItemDetailAsync(ItemDetailWriteDto itemDetailDto)
         {
             // Validate ItemID, UnitID etc. (as implemented before)
@@ -95,7 +111,7 @@ namespace ECommerce.Server.Services
             var unit = await _context.Units.FirstOrDefaultAsync(u => u.ID == itemDetailDto.UnitID && !u.Disabled);
             if (unit == null) return null; // Unit not found or disabled
 
-            if (item.BaseUnitID == itemDetailDto.UnitID && itemDetailDto.ConversionFactor != 1)
+            if (item.BaseUnitID == itemDetailDto.UnitID && itemDetailDto.definedPackageQty != 1)
             {
                 // Consider logging this attempt or returning a more specific error
                 return null; // ConversionFactor must be 1 for the item's base unit.
@@ -117,7 +133,7 @@ namespace ECommerce.Server.Services
                 Code = newCode, // Assign the generated code
                 ItemID = itemDetailDto.ItemID,
                 UnitID = itemDetailDto.UnitID,
-                ConversionFactor = itemDetailDto.ConversionFactor,
+                ConversionFactor = itemDetailDto.definedPackageQty,
                 Price = itemDetailDto.Price,
                 Disabled = false
             };
@@ -141,8 +157,7 @@ namespace ECommerce.Server.Services
                 throw; // Or return null for other DB errors
             }
 
-            var createdDetailWithNav = await GetBaseItemDetailQuery().FirstOrDefaultAsync(id => id.ID == itemDetail.ID);
-            return createdDetailWithNav != null ? MapToReadDto(createdDetailWithNav) : null;
+            return await GetItemDetailByIdAsync(itemDetail.ID);
         }
 
         public async Task<bool> UpdateItemDetailAsync(int id, ItemDetailUpdateDto itemDetailDto)
@@ -182,7 +197,7 @@ namespace ECommerce.Server.Services
             }
 
             // Business Rule: If the selected UnitID is the Item's BaseUnitID, ConversionFactor must be 1
-            if (item.BaseUnitID == itemDetailDto.UnitID && itemDetailDto.ConversionFactor != 1)
+            if (item.BaseUnitID == itemDetailDto.UnitID && itemDetailDto.definedPackageQty != 1)
             {
                 return false; // Or throw
             }
@@ -191,7 +206,7 @@ namespace ECommerce.Server.Services
             detailToUpdate.Code = itemDetailDto.Code;
             detailToUpdate.ItemID = itemDetailDto.ItemID;
             detailToUpdate.UnitID = itemDetailDto.UnitID;
-            detailToUpdate.ConversionFactor = itemDetailDto.ConversionFactor;
+            detailToUpdate.ConversionFactor = itemDetailDto.definedPackageQty;
             detailToUpdate.Price = itemDetailDto.Price;
             // Disabled status not changed here
 

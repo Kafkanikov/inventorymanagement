@@ -17,6 +17,7 @@ import {
   Warehouse,
   User,
   Scale,
+  FileSpreadsheetIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils'; // from shadcn
 import { useAuth } from '@/contexts/AuthContext';
@@ -78,6 +79,7 @@ export const Sidebar: React.FC = () => {
             <NavItem to="/dashboard/purchases" icon={ShoppingCart} label="Purchases" />
             <NavItem to="/dashboard/sales" icon={Landmark} label="Sales" />
             <NavItem to="/dashboard/inventory" icon={Boxes} label="Inventory/Stock" />
+            <NavItem to="/dashboard/balancesheet" icon={FileSpreadsheetIcon} label="BalanceSheet" />
 
             <Collapsible open={isAddOpen} onOpenChange={setIsAddOpen}>
               <CollapsibleTrigger asChild>

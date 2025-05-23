@@ -1,6 +1,8 @@
 ﻿using ECommerce.Server.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
+using ECommerce.Server.Data.Entities.ECommerce.Server.Data.Entities;
+using ECommerce.Server.Data.Views;
 
 namespace ECommerce.Server.Data
 {
@@ -15,8 +17,20 @@ namespace ECommerce.Server.Data
         public DbSet<Item> Items { get; set; }
         public DbSet<ItemDetail> ItemDetails { get; set; }
         public DbSet<InventoryLog> InventoryLogs { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<PurchaseDetail> PurchaseDetails { get; set; }
+        public DbSet<Sale> Sales { get; set; }
+        public DbSet<SaleDetail> SaleDetails { get; set; }
+        public DbSet<CurrentStockViewResult> CurrentStockLevels { get; set; }
+        public DbSet<ItemDetailStockViewResult> ItemDetailStockLevels { get; set; }
+        public DbSet<ItemFinancialSummaryViewResult> ItemFinancialSummaries { get; set; }
+        public DbSet<JournalPage> JournalPages { get; set; }
+        public DbSet<JournalEntry> JournalEntries { get; set; }
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<AccountCategory> AccountCategories { get; set; }
+        public DbSet<AccountSubCategory> AccountSubCategories { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        { 
             base.OnModelCreating(modelBuilder);
 
             // Optional: Configure unique constraints, indexes, etc.
@@ -105,11 +119,195 @@ namespace ECommerce.Server.Data
                     .WithMany() // No inverse navigation property in Unit in our current model
                     .HasForeignKey(d => d.UnitIDTransacted)
                     .OnDelete(DeleteBehavior.NoAction); // Or Restrict
+                modelBuilder.Entity<Purchase>(entity =>
+                {
+                    entity.HasIndex(e => e.Code).IsUnique(); // From your SQL schema
 
-                // Note: Your SQL CHECK constraints will be enforced by the database.
-                // Service layer should validate before attempting to save.
+                    entity.Property(e => e.Date).HasColumnType("date");
+                    entity.Property(e => e.Cost).HasColumnType("money");
+
+                    entity.HasOne(d => d.User)
+                        .WithMany() // Or specific collection if User has one for Purchases
+                        .HasForeignKey(d => d.UserID)
+                        .OnDelete(DeleteBehavior.SetNull); // If UserID is nullable and User deleted
+
+                    entity.HasOne(d => d.Supplier)
+                        .WithMany() // Or specific collection
+                        .HasForeignKey(d => d.SupplierID)
+                        .OnDelete(DeleteBehavior.SetNull); // If SupplierID is nullable
+
+                    entity.HasOne(d => d.StockLocation) // Matched navigation property name
+                        .WithMany() // Or specific collection
+                        .HasForeignKey(d => d.StockID)
+                        .OnDelete(DeleteBehavior.SetNull); // If StockID is nullable
+                    entity.ToTable(tb => tb.UseSqlOutputClause(false));
+                });
+
+                modelBuilder.Entity<PurchaseDetail>(entity =>
+                {
+                    entity.Property(e => e.Cost).HasColumnType("money");
+
+                    // Configuring relationship based on Alternate Key (Code)
+                    // 1. PurchaseDetail -> Purchase (Many-to-One)
+                    entity.HasOne(d => d.Purchase)
+                        .WithMany(p => p.PurchaseDetails)
+                        .HasPrincipalKey(p => p.Code) // Purchase.Code is the principal key for this relationship
+                        .HasForeignKey(d => d.PurchaseCode) // PurchaseDetail.PurchaseCode is the foreign key
+                        .OnDelete(DeleteBehavior.Cascade); // If a Purchase order is deleted, its details are deleted.
+                                                           // Given soft delete on Purchase, this DB cascade won't fire for soft deletes.
+                                                           // For physical deletes, this is standard.
+
+                    // 2. PurchaseDetail -> ItemDetail (Many-to-One)
+                    // This assumes ItemDetails.Code is a suitable alternate key on ItemDetail.
+                    // Ensure ItemDetails.Code has a unique index (which it does in your schema).
+                    entity.HasOne(d => d.ItemDetail)
+                        .WithMany() // Assuming ItemDetail doesn't have a direct collection of PurchaseDetails
+                        .HasPrincipalKey(id => id.Code) // ItemDetails.Code is the principal key
+                        .HasForeignKey(d => d.ItemCode) // PurchaseDetail.ItemCode is the foreign key
+                        .OnDelete(DeleteBehavior.NoAction); // Prevent deleting ItemDetail if in PurchaseDetail.
+                                                            // This means you must disable ItemDetail instead.
+                });
+            });
+            modelBuilder.Entity<Sale>(entity =>
+            {
+                entity.HasIndex(e => e.Code).IsUnique();
+                entity.Property(e => e.Date).HasColumnType("date");
+                entity.Property(e => e.Price).HasColumnType("money");
+
+                entity.HasOne(d => d.User)
+                    .WithMany() // Or specific collection if User has one for Sales
+                    .HasForeignKey(d => d.UserID)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(d => d.StockLocation)
+                    .WithMany() // Or specific collection
+                    .HasForeignKey(d => d.StockID)
+                    .OnDelete(DeleteBehavior.SetNull);
+                entity.ToTable(tb => tb.UseSqlOutputClause(false));
             });
 
+            modelBuilder.Entity<SaleDetail>(entity =>
+            {
+                entity.Property(e => e.Cost).HasColumnType("money"); // Maps to SaleDetails.Cost
+
+                entity.HasOne(d => d.Sale)
+                    .WithMany(p => p.SaleDetails)
+                    .HasPrincipalKey(p => p.Code) // Sale.Code is the principal key
+                    .HasForeignKey(d => d.SaleCode) // SaleDetail.SaleCode is the foreign key
+                    .OnDelete(DeleteBehavior.Cascade); // If Sale is deleted, its details are deleted
+
+                entity.HasOne(d => d.ItemDetail)
+                    .WithMany() // Assuming ItemDetail doesn't have a direct collection of SaleDetails
+                    .HasPrincipalKey(id => id.Code) // ItemDetails.Code is the principal key
+                    .HasForeignKey(d => d.ItemCode) // SaleDetail.ItemCode is the foreign key
+                    .OnDelete(DeleteBehavior.NoAction); // Prevent deleting ItemDetail if in SaleDetail
+            });
+            modelBuilder.Entity<CurrentStockViewResult>(eb =>
+            {
+                eb.HasNoKey(); 
+                eb.ToView("V_CurrentStock"); // Maps this entity to the database view named "V_CurrentStock"
+            });
+            modelBuilder.Entity<ItemDetailStockViewResult>(eb =>
+            {
+                eb.HasNoKey(); // Views are query-only
+                eb.ToView("V_ItemDetailStockOnHand");
+            });
+            modelBuilder.Entity<ItemFinancialSummaryViewResult>(eb =>
+            {
+                eb.HasNoKey(); // Views are query-only
+                eb.ToView("V_ItemFinancialSummary");
+            });
+            modelBuilder.Entity<JournalPage>(entity =>
+            {
+                entity.HasOne(jp => jp.User) // Assuming User navigation property on JournalPage
+                      .WithMany() // Assuming User doesn't have a direct collection of JournalPages
+                      .HasForeignKey(jp => jp.UserID)
+                      .OnDelete(DeleteBehavior.SetNull); // Or NoAction, if UserID can be null
+
+                // Define relationship for JournalPage.CurrencyID if you have a Currency table/entity
+                // entity.HasOne(jp => jp.Currency)
+                //       .WithMany()
+                //       .HasForeignKey(jp => jp.CurrencyID)
+                //       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<JournalEntry>(entity =>
+            {
+                entity.Property(e => e.Debit).HasColumnType("money");
+                entity.Property(e => e.Credit).HasColumnType("money");
+
+                // Relationship from JournalEntry to JournalPage (Many-to-One)
+                entity.HasOne(je => je.JournalPage)
+                    .WithMany(jp => jp.JournalEntries) // Assumes ICollection<JournalEntry> in JournalPage.cs
+                    .HasForeignKey(je => je.JournalPageID)
+                    .OnDelete(DeleteBehavior.Cascade); // If JournalPage is deleted, its entries are deleted
+
+                // Relationship from JournalEntry to Account (Many-to-One)
+                // This uses Account.AccountNumber (mapped from Account.Code in your SQL) as the principal key
+                // and JournalEntry.Account as the foreign key.
+                entity.HasOne(je => je.AccountEntity) // Navigation property in JournalEntry to Account
+                    .WithMany(a => a.JournalEntries) // ICollection<JournalEntry> in Account.cs
+                    .HasPrincipalKey(a => a.AccountNumber) // The principal key in Account is AccountNumber (SQL Code)
+                    .HasForeignKey(je => je.Account) // The foreign key in JournalEntry is Account (which stores AccountNumber)
+                    .OnDelete(DeleteBehavior.NoAction); // Prevent deleting an Account if it has journal entries
+            });
+
+            modelBuilder.Entity<Account>(entity =>
+            {
+                entity.ToTable("Account");
+                entity.HasKey(e => e.ID);
+
+                entity.Property(e => e.AccountNumber) // This maps to 'Code' column in SQL
+                    .HasColumnName("Code")
+                    .IsRequired()
+                    .HasMaxLength(20);
+                entity.HasIndex(e => e.AccountNumber).IsUnique(); // Your SQL has Account.Code as UNIQUE
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(150);
+                // Your SQL didn't explicitly state UNIQUE for Account.Name, but it's common.
+                // If it should be unique: entity.HasIndex(e => e.Name).IsUnique();
+
+                entity.Property(e => e.NormalBalance) // This maps to 'Bal' column in SQL
+                    .HasColumnName("Bal")
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+
+
+                // Relationship: Account to AccountCategory (Many-to-One)
+                entity.HasOne(a => a.AccountCategory)
+                    .WithMany(ac => ac.Accounts) // Assumes ICollection<Account> Accounts in AccountCategory
+                    .HasForeignKey(a => a.CategoryID)
+                    .OnDelete(DeleteBehavior.NoAction); // Or Restrict, as per your SQL FK
+
+                // Relationship: Account to AccountSubCategory (Many-to-One, optional)
+                entity.HasOne(a => a.AccountSubCategory)
+                    .WithMany(asb => asb.Accounts) // Assumes ICollection<Account> Accounts in AccountSubCategory
+                    .HasForeignKey(a => a.SubCategoryID)
+                    .IsRequired(false) // Since SubCategoryID is nullable
+                    .OnDelete(DeleteBehavior.NoAction); // Or Restrict / SetNull
+            });
+            modelBuilder.Entity<AccountCategory>(entity =>
+            {
+                entity.ToTable("AccCategory"); // Explicit table name
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+                entity.HasIndex(e => e.Name).IsUnique(); 
+            });
+
+            modelBuilder.Entity<AccountSubCategory>(entity =>
+            {
+                entity.ToTable("AccSubCategory");
+                entity.HasKey(e => e.ID);
+                entity.Property(e => e.Code).HasMaxLength(50); 
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
         }
     }
 }

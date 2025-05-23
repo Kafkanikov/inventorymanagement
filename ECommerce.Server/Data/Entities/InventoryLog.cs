@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace ECommerce.Server.Data.Entities
 {
@@ -57,5 +58,21 @@ namespace ECommerce.Server.Data.Entities
 
         [ForeignKey("UnitIDTransacted")]
         public virtual Unit TransactedUnit { get; set; }
+
+        public override string ToString()
+        {
+            return $"LogID: {LogID}, " +
+                   $"ItemID: {ItemID}, " +
+                   $"ItemDetailID_Transaction: {(ItemDetailID_Transaction.HasValue ? ItemDetailID_Transaction.Value.ToString() : "null")}, " +
+                   $"UserID: {UserID}, " +
+                   $"Timestamp: {Timestamp:O}, " +
+                   $"TransactionType: \"{TransactionType ?? "null"}\", " +
+                   $"QuantityTransacted: {QuantityTransacted}, " +
+                   $"UnitIDTransacted: {UnitIDTransacted}, " +
+                   $"ConversionFactorApplied: {ConversionFactorApplied}, " +
+                   $"QuantityInBaseUnits: {QuantityInBaseUnits}, " +
+                   $"CostPricePerBaseUnit: {(CostPricePerBaseUnit.HasValue ? CostPricePerBaseUnit.Value.ToString() : "null")}, " +
+                   $"SalePricePerTransactedUnit: {(SalePricePerTransactedUnit.HasValue ? SalePricePerTransactedUnit.Value.ToString() : "null")}";
+        }
     }
 }

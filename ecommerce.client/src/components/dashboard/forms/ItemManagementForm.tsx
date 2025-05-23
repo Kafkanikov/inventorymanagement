@@ -1,4 +1,4 @@
-// src/components/dashboard/forms/ItemManagementPage.tsx
+// ecommerce.client/src/components/dashboard/forms/ItemManagementForm.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,19 +11,21 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
-import { PlusCircle, MoreHorizontal, Edit, Trash2, PackagePlus, Loader2, ChevronDown, ChevronRight } from 'lucide-react'; // Added Chevron icons
+import { PlusCircle, MoreHorizontal, Edit, Trash2, PackagePlus, Loader2, ChevronDown, ChevronRight, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   Item, ItemWriteDto, ItemUpdateDto,
-  ItemDetail, ItemDetailWriteDto, ItemDetailUpdateDto,
+  ItemDetailReadDto, // Using the DTO that now includes quantityOnHand
+  ItemDetailWriteDto, ItemDetailUpdateDto,
   Category, Unit, ApiErrorResponse
-} from '@/types/inventory'; // Adjust path as needed
+} from '@/types/inventory';
+// import { format } from 'date-fns'; // Not strictly needed here unless formatting dates
 
 const ITEMS_API_URL = '/api/items';
 const ITEM_DETAILS_API_URL = '/api/itemdetails';
@@ -59,11 +61,10 @@ export const ItemManagementForm: React.FC = () => {
   const [isItemDeleteDialogIsOpen, setIsItemDeleteDialogIsOpen] = useState(false);
   const [itemToDeleteId, setItemToDeleteId] = useState<number | null>(null);
 
-  // ItemDetail States (now managed as a cache and per-item expansion)
+  // ItemDetail States
   const [expandedItemIds, setExpandedItemIds] = useState<Set<number>>(new Set());
-  const [itemDetailsCache, setItemDetailsCache] = useState<Record<number, ItemDetail[]>>({});
-  const [loadingDetailsForItemId, setLoadingDetailsForItemId] = useState<number | null>(null); // Track loading for specific item's details
-
+  const [itemDetailsCache, setItemDetailsCache] = useState<Record<number, ItemDetailReadDto[]>>({});
+  const [loadingDetailsForItemId, setLoadingDetailsForItemId] = useState<number | null>(null);
   const [isItemDetailModalOpen, setIsItemDetailModalOpen] = useState(false);
   const [currentItemDetailData, setCurrentItemDetailData] = useState<Partial<ItemDetailUpdateDto>>({});
   const [editingItemDetailId, setEditingItemDetailId] = useState<number | null>(null);
@@ -123,7 +124,7 @@ export const ItemManagementForm: React.FC = () => {
   // --- Item CRUD ---
   const handleAddNewItem = () => {
     setEditingItemId(null);
-    setCurrentItemData({ name: '', categoryID: null, baseUnitID: undefined, qty: null });
+    setCurrentItemData({ name: '', categoryID: null, baseUnitID: undefined, qty: 0 });
     setIsItemModalOpen(true);
   };
 
@@ -161,7 +162,7 @@ export const ItemManagementForm: React.FC = () => {
       name: currentItemData.name,
       categoryID: currentItemData.categoryID || null,
       baseUnitID: currentItemData.baseUnitID,
-      qty: currentItemData.qty === undefined || currentItemData.qty === null || isNaN(Number(currentItemData.qty)) ? null : Number(currentItemData.qty),
+      qty: currentItemData.qty === undefined || currentItemData.qty === null || isNaN(Number(currentItemData.qty)) ? 0 : Number(currentItemData.qty),
     };
     try {
       let response;
@@ -178,16 +179,18 @@ export const ItemManagementForm: React.FC = () => {
         successMessage = "Item created successfully.";
       }
       if (!response.ok) { const errorData = await response.json().catch(() => ({})); throw errorData; }
-      if ((response.status === 200 || response.status === 201) && response.headers.get("content-length") !== "0") {
-        const savedItem: Item = await response.json();
-         if (editingItemId) {
-            setItems(items.map(i => (i.id === editingItemId ? savedItem : i)));
-        } else {
-            setItems([...items, savedItem]);
-        }
+      
+      const savedItem: Item = await response.json();
+      if (editingItemId) {
+          setItems(items.map(i => (i.id === editingItemId ? savedItem : i)));
+          // If the updated item was expanded, refresh its details with the new qty
+          if (expandedItemIds.has(editingItemId)) {
+            fetchAndCacheItemDetails(savedItem); // Pass the updated item
+          }
       } else {
-         await fetchItems();
+          setItems(prevItems => [...prevItems, savedItem]);
       }
+
       toast.success("Success", { description: successMessage });
       setIsItemModalOpen(false);
     } catch (error) {
@@ -210,7 +213,6 @@ export const ItemManagementForm: React.FC = () => {
       if (!response.ok && response.status !== 204) { const errorData = await response.json().catch(() => ({})); throw errorData; }
       setItems(items.filter(i => i.id !== itemToDeleteId));
       toast.success("Success", { description: "Item deleted successfully." });
-      // If deleted item's details were expanded, remove from expanded set and cache
       setExpandedItemIds(prev => {
         const newSet = new Set(prev);
         newSet.delete(itemToDeleteId);
@@ -230,36 +232,40 @@ export const ItemManagementForm: React.FC = () => {
     }
   };
 
-  // --- ItemDetail Logic (Modified for Sub-rows) ---
-  const fetchAndCacheItemDetails = useCallback(async (itemId: number) => {
-    if (itemDetailsCache[itemId]) { // Already cached
-      return itemDetailsCache[itemId];
-    }
-    setLoadingDetailsForItemId(itemId);
+  // --- ItemDetail Logic ---
+  const fetchAndCacheItemDetails = useCallback(async (parentItem: Item) => {
+    // If already cached and parentItem.qty hasn't changed, we might not need to re-calculate,
+    // but for simplicity and to ensure freshness if other detail props change, we'll re-map.
+    // A more optimized approach could check if parentItem.qty is different from a previously stored one.
+    
+    setLoadingDetailsForItemId(parentItem.id);
     try {
-      const response = await fetch(`${ITEM_DETAILS_API_URL}?itemId=${itemId}`); // Add ?includeDisabled=true if needed
-      if (!response.ok) throw new Error(`Failed to fetch item details for item ID ${itemId}: ${response.statusText}`);
-      const data: ItemDetail[] = await response.json();
-      setItemDetailsCache(prev => ({ ...prev, [itemId]: data }));
-      return data;
+      const response = await fetch(`${ITEM_DETAILS_API_URL}?itemId=${parentItem.id}`);
+      if (!response.ok) throw new Error(`Failed to fetch item details for item ID ${parentItem.id}: ${response.statusText}`);
+      const data: ItemDetailReadDto[] = await response.json();
+      
+      const detailsWithStock = data.map(detail => ({
+        ...detail
+      }));
+
+      setItemDetailsCache(prev => ({ ...prev, [parentItem.id]: detailsWithStock }));
+      return detailsWithStock;
     } catch (error) {
-      handleApiError(error, `Could not fetch details for item ID ${itemId}.`, "Fetch Item Details");
-      setItemDetailsCache(prev => ({ ...prev, [itemId]: [] })); // Cache empty on error
+      handleApiError(error, `Could not fetch details for item ID ${parentItem.id}.`, "Fetch Item Details");
+      setItemDetailsCache(prev => ({ ...prev, [parentItem.id]: [] }));
       return [];
     } finally {
       setLoadingDetailsForItemId(null);
     }
-  }, [itemDetailsCache]);
+  }, []); // itemDetailsCache removed from deps to avoid loop if it was causing one. fetchAndCacheItemDetails is called explicitly.
 
-  const toggleItemDetails = async (itemId: number) => {
+  const toggleItemDetails = async (item: Item) => {
     const newExpandedItemIds = new Set(expandedItemIds);
-    if (newExpandedItemIds.has(itemId)) {
-      newExpandedItemIds.delete(itemId);
+    if (newExpandedItemIds.has(item.id)) {
+      newExpandedItemIds.delete(item.id);
     } else {
-      newExpandedItemIds.add(itemId);
-      if (!itemDetailsCache[itemId]) { // Fetch only if not in cache
-        await fetchAndCacheItemDetails(itemId);
-      }
+      newExpandedItemIds.add(item.id);
+      await fetchAndCacheItemDetails(item); 
     }
     setExpandedItemIds(newExpandedItemIds);
   };
@@ -270,22 +276,22 @@ export const ItemManagementForm: React.FC = () => {
     setEditingItemDetailId(null);
     setCurrentItemDetailData({
       itemID: itemId,
-      code: '',
+      code: '', 
       unitID: undefined,
-      conversionFactor: 1,
+      definedPackageQty: 1, // Use definedPackageQty
       price: null,
     });
     setIsItemDetailModalOpen(true);
   };
 
-  const handleEditItemDetail = (detail: ItemDetail, parentItemId: number) => {
+  const handleEditItemDetail = (detail: ItemDetailReadDto, parentItemId: number) => {
     setParentItemIdForDetailModal(parentItemId);
     setEditingItemDetailId(detail.id);
     setCurrentItemDetailData({
       code: detail.code,
       itemID: detail.itemID,
       unitID: detail.unitID,
-      conversionFactor: detail.conversionFactor,
+      definedPackageQty: detail.definedPackageQty, // Use definedPackageQty
       price: detail.price,
     });
     setIsItemDetailModalOpen(true);
@@ -305,19 +311,20 @@ export const ItemManagementForm: React.FC = () => {
 
   const handleItemDetailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!parentItemIdForDetailModal || currentItemDetailData.unitID === undefined || currentItemDetailData.unitID === null || !currentItemDetailData.conversionFactor) {
-      toast.error("Validation Error", { description: "Unit and Conversion Factor are required for item detail." });
+    const parentItem = items.find(i => i.id === parentItemIdForDetailModal);
+    if (!parentItem || currentItemDetailData.unitID === undefined || currentItemDetailData.unitID === null || !currentItemDetailData.definedPackageQty) { // Use definedPackageQty
+      toast.error("Validation Error", { description: "Parent item, Unit, and Defined Package Qty are required." });
       return;
     }
     if (editingItemDetailId && (!currentItemDetailData.code || !currentItemDetailData.code.trim())) {
-        toast.error("Validation Error", { description: "Code is required when updating an item detail." });
+        toast.error("Validation Error", { description: "Code is required when updating." });
         return;
     }
     setIsSubmitting(true);
     const baseDtoFields = {
-        itemID: parentItemIdForDetailModal, // Use parentItemIdForDetailModal
+        itemID: parentItemIdForDetailModal!, 
         unitID: currentItemDetailData.unitID!,
-        conversionFactor: Number(currentItemDetailData.conversionFactor),
+        definedPackageQty: Number(currentItemDetailData.definedPackageQty), // Use definedPackageQty
         price: currentItemDetailData.price === undefined || currentItemDetailData.price === null || isNaN(Number(currentItemDetailData.price)) ? null : Number(currentItemDetailData.price),
     };
     let dtoToSend: ItemDetailWriteDto | ItemDetailUpdateDto;
@@ -333,59 +340,59 @@ export const ItemManagementForm: React.FC = () => {
         response = await fetch(`${ITEM_DETAILS_API_URL}/${editingItemDetailId}`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dtoToSend as ItemDetailUpdateDto),
         });
-        successMessage = "Item detail updated successfully.";
+        successMessage = "Packaging detail updated.";
       } else {
         response = await fetch(ITEM_DETAILS_API_URL, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dtoToSend as ItemDetailWriteDto),
         });
-        successMessage = "Item detail created successfully.";
+        successMessage = "Packaging detail created.";
       }
       if (!response.ok) { const errorData = await response.json().catch(() => ({})); throw errorData; }
       
-      // Force re-fetch and update cache for the parent item
-      await fetchAndCacheItemDetails(parentItemIdForDetailModal); 
-      // Ensure the expanded state remains or is set if needed
+      await fetchAndCacheItemDetails(parentItem);
       setExpandedItemIds(prev => new Set(prev).add(parentItemIdForDetailModal!));
-
 
       toast.success("Success", { description: successMessage });
       setIsItemDetailModalOpen(false);
     } catch (error) {
-      handleApiError(error, "Could not save item detail.", editingItemDetailId ? "Update Item Detail" : "Create Item Detail");
+      handleApiError(error, "Could not save packaging detail.", editingItemDetailId ? "Update Detail" : "Create Detail");
     } finally {
       setIsSubmitting(false);
-      setParentItemIdForDetailModal(null); // Reset parent item ID context
     }
   };
 
   const handleDeleteItemDetailInitiate = (detailId: number, parentItemId: number) => {
-    setParentItemIdForDetailModal(parentItemId); // Store parent for re-fetch
+    setParentItemIdForDetailModal(parentItemId); 
     setItemDetailToDeleteId(detailId);
     setIsItemDetailDeleteDialogIsOpen(true);
   };
 
   const handleDeleteItemDetailConfirm = async () => {
     if (itemDetailToDeleteId === null || !parentItemIdForDetailModal) return;
+    const parentItem = items.find(i => i.id === parentItemIdForDetailModal);
+    if (!parentItem) {
+        toast.error("Error", {description: "Parent item not found."});
+        setIsItemDetailDeleteDialogIsOpen(false);
+        return;
+    }
     setIsSubmitting(true);
     try {
       const response = await fetch(`${ITEM_DETAILS_API_URL}/${itemDetailToDeleteId}`, { method: 'DELETE' });
       if (!response.ok && response.status !== 204) { const errorData = await response.json().catch(() => ({})); throw errorData; }
       
-      await fetchAndCacheItemDetails(parentItemIdForDetailModal);
+      await fetchAndCacheItemDetails(parentItem);
       setExpandedItemIds(prev => new Set(prev).add(parentItemIdForDetailModal!));
 
-      toast.success("Success", { description: "Item detail deleted successfully." });
+      toast.success("Success", { description: "Packaging detail deleted." });
     } catch (error) {
-      handleApiError(error, "Could not delete item detail.", "Delete Item Detail");
+      handleApiError(error, "Could not delete packaging detail.", "Delete Detail");
     } finally {
       setIsSubmitting(false);
       setIsItemDetailDeleteDialogIsOpen(false);
       setItemDetailToDeleteId(null);
-      setParentItemIdForDetailModal(null);
     }
   };
-
-  // --- Render Logic ---
+  console.log(JSON.stringify(itemDetailsCache));
   return (
     <Card>
       <CardHeader>
@@ -395,7 +402,7 @@ export const ItemManagementForm: React.FC = () => {
             <PlusCircle className="mr-2 h-4 w-4" /> Add New Item
           </Button>
         </div>
-        <CardDescription>View items and manage their packaging details as sub-rows.</CardDescription>
+        <CardDescription>View items and manage their packaging details. Total stock is in base units.</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoadingItems && <div className="text-center py-4"><Loader2 className="h-6 w-6 animate-spin inline mr-2" />Loading items...</div>}
@@ -404,11 +411,11 @@ export const ItemManagementForm: React.FC = () => {
             <TableCaption>{items.length === 0 ? "No items found." : "A list of your items."}</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-12"></TableHead> {/* For expand icon */}
+                <TableHead className="w-12"></TableHead> 
                 <TableHead>Name</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Base Unit</TableHead>
-                <TableHead className="text-right">Stock Qty</TableHead>
+                {/* <TableHead className="text-right">Stock (Base Units)</TableHead> */}
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -418,14 +425,14 @@ export const ItemManagementForm: React.FC = () => {
                 <React.Fragment key={item.id}>
                   <TableRow className={item.disabled ? "opacity-60 bg-muted/30 hover:bg-muted/40" : "hover:bg-muted/50"}>
                     <TableCell>
-                      <Button variant="ghost" size="icon" onClick={() => toggleItemDetails(item.id)} className="h-8 w-8">
+                      <Button variant="ghost" size="icon" onClick={() => toggleItemDetails(item)} className="h-8 w-8">
                         {expandedItemIds.has(item.id) ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </Button>
                     </TableCell>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell>{categories.find(c => c.id === item.categoryID)?.name || 'N/A'}</TableCell>
                     <TableCell>{units.find(u => u.id === item.baseUnitID)?.name || 'N/A'}</TableCell>
-                    <TableCell className="text-right">{item.qty !== null ? item.qty : '-'}</TableCell>
+                    {/* <TableCell className="text-right">{item.qty !== null ? item.qty.toLocaleString() : '-'}</TableCell> */}
                     <TableCell>{item.disabled ? "Disabled" : "Active"}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
@@ -441,12 +448,15 @@ export const ItemManagementForm: React.FC = () => {
                   </TableRow>
                   {expandedItemIds.has(item.id) && (
                     <TableRow className="bg-muted/20 dark:bg-muted/10 hover:bg-muted/30 dark:hover:bg-muted/20">
-                      <TableCell colSpan={7} className="p-0"> {/* ColSpan to span all columns */}
+                      <TableCell colSpan={7} className="p-0">
                         <div className="p-4 ">
                           <div className="flex justify-between items-center mb-2">
-                            <h4 className="font-semibold text-sm">Item Details for: {item.name}</h4>
-                            <Button variant="outline" size="icon" onClick={() => handleAddNewItemDetail(item.id)} disabled={isSubmitting}>
-                              <PackagePlus className="mr-1 h-3 w-3" /> Add Detail
+                            <h4 className="font-semibold text-sm flex items-center">
+                              <Package className="mr-2 h-4 w-4 text-muted-foreground" />
+                              Packaging Details for: {item.name}
+                            </h4>
+                            <Button variant="outline" size="sm" onClick={() => handleAddNewItemDetail(item.id)} disabled={isSubmitting}>
+                              <PackagePlus className="mr-1 h-3 w-3" /> Add Packaging
                             </Button>
                           </div>
                           {loadingDetailsForItemId === item.id && <div className="text-center py-3"><Loader2 className="h-5 w-5 animate-spin inline mr-2" />Loading details...</div>}
@@ -456,9 +466,9 @@ export const ItemManagementForm: React.FC = () => {
                                 <TableRow className="text-xs">
                                   <TableHead>Code</TableHead>
                                   <TableHead>Unit</TableHead>
-                                  <TableHead className="text-right">Conv. Factor</TableHead>
-                                  <TableHead className="text-right">Price</TableHead>
-                                  <TableHead>Status</TableHead>
+                                  <TableHead className="text-right">Unit Conversion</TableHead> 
+                                  <TableHead className="text-right">Stock </TableHead> 
+                                  <TableHead className="text-right">Price</TableHead> 
                                   <TableHead className="text-right w-20">Actions</TableHead>
                                 </TableRow>
                               </TableHeader>
@@ -466,8 +476,11 @@ export const ItemManagementForm: React.FC = () => {
                                 {itemDetailsCache[item.id]!.map(detail => (
                                   <TableRow key={detail.id} className={`text-xs ${detail.disabled ? "opacity-50" : ""}`}>
                                     <TableCell>{detail.code}</TableCell>
-                                    <TableCell>{units.find(u => u.id === detail.unitID)?.name || 'N/A'}</TableCell>
-                                    <TableCell className="text-right">{detail.conversionFactor}</TableCell>
+                                    <TableCell>{detail.unitName || 'N/A'}</TableCell>
+                                    <TableCell className="text-right">{detail.definedPackageQty}</TableCell> {/* Use definedPackageQty */}
+                                    <TableCell className="text-right font-medium">
+                                      {detail.quantityOnHand !== undefined && detail.quantityOnHand !== null ? detail.quantityOnHand.toLocaleString() : '-'}
+                                    </TableCell>
                                     <TableCell className="text-right">{detail.price !== null ? `$${detail.price.toFixed(2)}` : '-'}</TableCell>
                                     <TableCell>{detail.disabled ? "Disabled" : "Active"}</TableCell>
                                     <TableCell className="text-right">
@@ -480,7 +493,7 @@ export const ItemManagementForm: React.FC = () => {
                             </Table>
                           )}
                           {loadingDetailsForItemId !== item.id && itemDetailsCache[item.id] && itemDetailsCache[item.id]!.length === 0 && (
-                            <p className="text-sm text-muted-foreground text-center py-3">No details found for this item.</p>
+                            <p className="text-sm text-muted-foreground text-center py-3">No packaging details found for this item.</p>
                           )}
                         </div>
                       </TableCell>
@@ -493,7 +506,7 @@ export const ItemManagementForm: React.FC = () => {
         )}
       </CardContent>
 
-      {/* Item Add/Edit Modal (remains largely the same) */}
+      {/* Item Add/Edit Modal */}
       <Dialog open={isItemModalOpen} onOpenChange={setIsItemModalOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
@@ -524,8 +537,8 @@ export const ItemManagementForm: React.FC = () => {
               </Select>
             </div>
              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="item-qty" className="text-right col-span-1">Stock Qty</Label>
-                <Input id="item-qty" name="qty" type="number" min="0" value={currentItemData.qty === null || currentItemData.qty === undefined ? '' : currentItemData.qty} onChange={(e) => handleItemFormChange('qty', e.target.value === '' ? null : parseInt(e.target.value, 10))} className="col-span-3" placeholder="Optional initial stock" disabled={isSubmitting} />
+                <Label htmlFor="item-qty" className="text-right col-span-1">Stock (Base Units)</Label>
+                <Input id="item-qty" name="qty" type="number" min="0" value={currentItemData.qty === null || currentItemData.qty === undefined ? '' : currentItemData.qty} onChange={(e) => handleItemFormChange('qty', e.target.value === '' ? null : parseInt(e.target.value, 10))} className="col-span-3" placeholder="Initial stock in base units" disabled={isSubmitting} />
             </div>
             <DialogFooter>
               <DialogClose asChild><Button type="button" variant="outline" disabled={isSubmitting}>Cancel</Button></DialogClose>
@@ -538,10 +551,10 @@ export const ItemManagementForm: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Item Delete Confirmation Dialog (remains largely the same) */}
+      {/* Item Delete Confirmation Dialog */}
       <AlertDialog open={isItemDeleteDialogIsOpen} onOpenChange={setIsItemDeleteDialogIsOpen}>
         <AlertDialogContent>
-            <AlertDialogHeader><AlertDialogTitle>Delete Item?</AlertDialogTitle><AlertDialogDescription>This action cannot be undone. Deleting an item might also affect its details.</AlertDialogDescription></AlertDialogHeader>
+            <AlertDialogHeader><AlertDialogTitle>Delete Item?</AlertDialogTitle><AlertDialogDescription>This action cannot be undone. Deleting an item will also disable its packaging details.</AlertDialogDescription></AlertDialogHeader>
             <AlertDialogFooter>
                 <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={handleDeleteItemConfirm} disabled={isSubmitting} className="bg-red-600 hover:bg-red-700">
@@ -552,11 +565,11 @@ export const ItemManagementForm: React.FC = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Item Detail Add/Edit Modal (remains largely the same, but ensure parentItemIdForDetailModal is used) */}
+      {/* Item Detail Add/Edit Modal */}
         <Dialog open={isItemDetailModalOpen} onOpenChange={setIsItemDetailModalOpen}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>{editingItemDetailId ? 'Edit Item Detail' : 'Add New Item Detail'}</DialogTitle>
+                    <DialogTitle>{editingItemDetailId ? 'Edit Packaging Detail' : 'Add New Packaging Detail'}</DialogTitle>
                     <DialogDescription>For item: {items.find(i => i.id === parentItemIdForDetailModal)?.name || 'N/A'}</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleItemDetailSubmit} className="space-y-4 py-2">
@@ -571,32 +584,34 @@ export const ItemManagementForm: React.FC = () => {
                         <Select name="unitID" value={currentItemDetailData.unitID === null || currentItemDetailData.unitID === undefined ? "" : String(currentItemDetailData.unitID)} onValueChange={(val) => handleItemDetailSelectChange('unitID', val)}>
                             <SelectTrigger className="col-span-3" disabled={isSubmitting}><SelectValue placeholder="Select unit" /></SelectTrigger>
                             <SelectContent>
-                                {units.filter(u => !u.disabled).map(unit => <SelectItem key={String(unit.id)} value={String(unit.id)}>{unit.name}</SelectItem>)}
+                                {units.filter(u => !u.disabled && u.id !== items.find(i => i.id === parentItemIdForDetailModal)?.baseUnitID) 
+                                .map(unit => <SelectItem key={String(unit.id)} value={String(unit.id)}>{unit.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="detail-conversionFactor" className="text-right col-span-1">Conversion Factor*</Label>
-                        <Input id="detail-conversionFactor" name="conversionFactor" type="number" min="1" value={currentItemDetailData.conversionFactor || 1} onChange={(e) => handleItemDetailFormChange('conversionFactor', parseInt(e.target.value,10) || 1)} className="col-span-3" required disabled={isSubmitting} />
+                        {/* Use definedPackageQty */}
+                        <Label htmlFor="detail-definedPackageQty" className="text-right col-span-1">Base Units / Pack*</Label>
+                        <Input id="detail-definedPackageQty" name="definedPackageQty" type="number" min="1" value={currentItemDetailData.definedPackageQty || 1} onChange={(e) => handleItemDetailFormChange('definedPackageQty', parseInt(e.target.value,10) || 1)} className="col-span-3" required disabled={isSubmitting} />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="detail-price" className="text-right col-span-1">Price</Label>
+                        <Label htmlFor="detail-price" className="text-right col-span-1">Selling Price (per Pack)</Label>
                         <Input id="detail-price" name="price" type="number" step="0.01" min="0" value={currentItemDetailData.price === null || currentItemDetailData.price === undefined ? '' : currentItemDetailData.price} onChange={(e) => handleItemDetailFormChange('price', e.target.value === '' ? null : parseFloat(e.target.value))} className="col-span-3" placeholder="0.00" disabled={isSubmitting} />
                     </div>
                     <DialogFooter>
                         <DialogClose asChild><Button type="button" variant="outline" disabled={isSubmitting}>Cancel</Button></DialogClose>
                         <Button type="submit" disabled={isSubmitting}>
                             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {editingItemDetailId ? 'Save Changes' : 'Add Detail'}
+                            {editingItemDetailId ? 'Save Changes' : 'Add Packaging'}
                         </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
         </Dialog>
-        {/* Item Detail Delete Confirmation Dialog (remains largely the same) */}
+        {/* Item Detail Delete Confirmation Dialog */}
         <AlertDialog open={isItemDetailDeleteDialogIsOpen} onOpenChange={setIsItemDetailDeleteDialogIsOpen}>
             <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Delete Item Detail?</AlertDialogTitle><AlertDialogDescription>This action cannot be undone.</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogHeader><AlertDialogTitle>Delete Packaging Detail?</AlertDialogTitle><AlertDialogDescription>This action cannot be undone.</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleDeleteItemDetailConfirm} disabled={isSubmitting} className="bg-red-600 hover:bg-red-700">

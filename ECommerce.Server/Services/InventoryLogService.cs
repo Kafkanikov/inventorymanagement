@@ -51,14 +51,8 @@ namespace ECommerce.Server.Services
 
         public async Task<InventoryLogReadDto?> CreateManualLogEntryAsync(InventoryLogCreateDto logDto, int performingUserId) // Modified
         {
-            if (logDto.TransactionType == "Purchase" || logDto.TransactionType == "Sale")
-            {
-                Console.WriteLine("Hi");
-                return null;
-            }
             if (logDto.QuantityTransacted == 0)
             {
-                Console.WriteLine("Hello");
                 return null;
             }
 
@@ -116,9 +110,17 @@ namespace ECommerce.Server.Services
             }
             else if (validOutTypes.Contains(logDto.TransactionType))
             {
-                if (logDto.SalePricePerTransactedUnit.HasValue && logDto.SalePricePerTransactedUnit < 0) return null;
-                salePrice = logDto.SalePricePerTransactedUnit;
-                if (logDto.CostPricePerBaseUnit.HasValue) return null;
+                if (logDto.SalePricePerTransactedUnit.HasValue && logDto.SalePricePerTransactedUnit < 0) return null; // Check for negative
+                salePrice = logDto.SalePricePerTransactedUnit; 
+                if (logDto.TransactionType == "Sale")
+                {
+                    if (logDto.CostPricePerBaseUnit.HasValue && logDto.CostPricePerBaseUnit < 0) return null;
+                    costPrice = logDto.CostPricePerBaseUnit;
+                }
+                else
+                { // For other validOutTypes like "Vendor Return"
+                    if (logDto.CostPricePerBaseUnit.HasValue) return null;
+                }
             }
             else if (logDto.TransactionType == "Stock Adjustment Out")
             {
@@ -146,7 +148,7 @@ namespace ECommerce.Server.Services
                 CostPricePerBaseUnit = costPrice,
                 SalePricePerTransactedUnit = salePrice
             };
-
+            Console.WriteLine(inventoryLogEntry.ToString());
             _context.InventoryLogs.Add(inventoryLogEntry);
             try
             {
