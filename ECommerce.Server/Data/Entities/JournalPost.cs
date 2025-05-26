@@ -1,4 +1,4 @@
-﻿// File: Data/Entities/JournalEntry.cs
+﻿// File: Data/Entities/JournalPost.cs
 using ECommerce.Server.Data.Entities.ECommerce.Server.Data.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,18 +6,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ECommerce.Server.Data.Entities
 {
     [Table("JournalPost")] 
-    public class JournalEntry
+    public class JournalPost
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; } // Corresponds to your SQL ID
+        public int ID { get; set; }
 
         [Required]
-        public int JournalPageID { get; set; } // FK to JournalPage.ID
+        public int JournalPageID { get; set; } 
 
         [Required]
-        [StringLength(20)] // Assuming AccountNumber max length
-        public string Account { get; set; } // Stores the AccountNumber (e.g., "2100020000")
+        [StringLength(20)] 
+        public string Account { get; set; } 
 
         [StringLength(50)]
         public string? Ref { get; set; }

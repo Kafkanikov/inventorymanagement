@@ -25,7 +25,7 @@ namespace ECommerce.Server.Data
         public DbSet<ItemDetailStockViewResult> ItemDetailStockLevels { get; set; }
         public DbSet<ItemFinancialSummaryViewResult> ItemFinancialSummaries { get; set; }
         public DbSet<JournalPage> JournalPages { get; set; }
-        public DbSet<JournalEntry> JournalEntries { get; set; }
+        public DbSet<JournalPost> JournalEntries { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<AccountCategory> AccountCategories { get; set; }
         public DbSet<AccountSubCategory> AccountSubCategories { get; set; }
@@ -231,24 +231,24 @@ namespace ECommerce.Server.Data
                 //       .OnDelete(DeleteBehavior.Restrict);
             });
 
-            modelBuilder.Entity<JournalEntry>(entity =>
+            modelBuilder.Entity<JournalPost>(entity =>
             {
                 entity.Property(e => e.Debit).HasColumnType("money");
                 entity.Property(e => e.Credit).HasColumnType("money");
 
-                // Relationship from JournalEntry to JournalPage (Many-to-One)
+                // Relationship from JournalPost to JournalPage (Many-to-One)
                 entity.HasOne(je => je.JournalPage)
-                    .WithMany(jp => jp.JournalEntries) // Assumes ICollection<JournalEntry> in JournalPage.cs
+                    .WithMany(jp => jp.JournalEntries) // Assumes ICollection<JournalPost> in JournalPage.cs
                     .HasForeignKey(je => je.JournalPageID)
                     .OnDelete(DeleteBehavior.Cascade); // If JournalPage is deleted, its entries are deleted
 
-                // Relationship from JournalEntry to Account (Many-to-One)
+                // Relationship from JournalPost to Account (Many-to-One)
                 // This uses Account.AccountNumber (mapped from Account.Code in your SQL) as the principal key
-                // and JournalEntry.Account as the foreign key.
-                entity.HasOne(je => je.AccountEntity) // Navigation property in JournalEntry to Account
-                    .WithMany(a => a.JournalEntries) // ICollection<JournalEntry> in Account.cs
+                // and JournalPost.Account as the foreign key.
+                entity.HasOne(je => je.AccountEntity) // Navigation property in JournalPost to Account
+                    .WithMany(a => a.JournalEntries) // ICollection<JournalPost> in Account.cs
                     .HasPrincipalKey(a => a.AccountNumber) // The principal key in Account is AccountNumber (SQL Code)
-                    .HasForeignKey(je => je.Account) // The foreign key in JournalEntry is Account (which stores AccountNumber)
+                    .HasForeignKey(je => je.Account) // The foreign key in JournalPost is Account (which stores AccountNumber)
                     .OnDelete(DeleteBehavior.NoAction); // Prevent deleting an Account if it has journal entries
             });
 

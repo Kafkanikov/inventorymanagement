@@ -59,7 +59,6 @@ builder.Services.AddScoped<IInventoryLogService, InventoryLogService>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 builder.Services.AddScoped<IStockQueryService, StockQueryService>();
-builder.Services.AddScoped<IAccountingReportService, AccountingReportService>();
 
 builder.Services.AddOpenApi();
 

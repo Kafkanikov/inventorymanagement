@@ -19,7 +19,6 @@ import { UserManagementForm } from './components/dashboard/forms/UserManagementF
 import { UnitManagementForm } from './components/dashboard/forms/UnitManagementForm';
 import { Loader2 } from 'lucide-react';
 import { ItemManagementForm } from './components/dashboard/forms/ItemManagementForm';
-import { BalanceSheetView } from './components/dashboard/views/BalaneSheetView';
 
 function AppContent() {
     const { isAuthenticated, isLoading, user } = useAuth();
@@ -135,7 +134,6 @@ function AppContent() {
             <Route path="inventory" element={<InventoryLogView />} />
             <Route path="purchases" element={<PurchaseView />} />
             <Route path="sales" element={<SaleView />} />
-            <Route path="balancesheet" element={<BalanceSheetView />} />
             <Route path="add"> {/* No element needed for parent 'add' if it's just a grouping */}
               <Route path="item" element={<ItemManagementForm />} />
               <Route path="category" element={<CategoryManagementForm />} />

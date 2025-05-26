@@ -35,6 +35,6 @@ namespace ECommerce.Server.Data.Entities
         public bool Disabled { get; set; } = false; // Corresponds to your SQL Disabled
 
         // Navigation property for all entries in this journal page
-        public virtual ICollection<JournalEntry> JournalEntries { get; set; } = new List<JournalEntry>();
+        public virtual ICollection<JournalPost> JournalEntries { get; set; } = new List<JournalPost>();
     }
 }

@@ -23,10 +23,6 @@
       "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\response\\simplifiedbalancelinedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\ecommercedbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\ecommercedbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -111,8 +107,7 @@
               "RelativeToolTip": "ECommerce.Server\\Data\\Entities\\Account.cs",
               "ViewState": "AgIAABoAAAAAAAAAAAAAwCcAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-23T04:12:24.227Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-23T04:12:24.227Z"
             },
             {
               "$type": "Document",
@@ -124,8 +119,7 @@
               "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Response\\SimplifiedBalanceLineDto.cs",
               "ViewState": "AgIAAAIAAAAAAAAAAAAAAAUAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-23T02:55:38.474Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-23T02:55:38.474Z"
             },
             {
               "$type": "Document",
@@ -137,12 +131,11 @@
               "RelativeToolTip": "ECommerce.Server\\ECommerce.Server.http",
               "ViewState": "AgIAAAsAAAAAAAAAAAAAwBoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2025-05-23T02:33:47.187Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-23T02:33:47.187Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Program.cs",
               "RelativeDocumentMoniker": "ECommerce.Server\\Program.cs",
@@ -150,8 +143,7 @@
               "RelativeToolTip": "ECommerce.Server\\Program.cs",
               "ViewState": "AgIAADMAAAAAAAAAAAAAAD0AAABQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-23T02:32:01.876Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-23T02:32:01.876Z"
             },
             {
               "$type": "Document",
@@ -159,24 +151,11 @@
               "Title": "AccountingReportService.cs",
               "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\AccountingReportService.cs",
               "RelativeDocumentMoniker": "ECommerce.Server\\Services\\AccountingReportService.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\AccountingReportService.cs*",
-              "RelativeToolTip": "ECommerce.Server\\Services\\AccountingReportService.cs*",
-              "ViewState": "AgIAAG0AAAAAAAAAAAAlwHQAAAAnAAAAAAAAAA==",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\AccountingReportService.cs",
+              "RelativeToolTip": "ECommerce.Server\\Services\\AccountingReportService.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAwIsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-23T01:56:30.937Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "EcommerceDbContext.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\EcommerceDbContext.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\EcommerceDbContext.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\EcommerceDbContext.cs",
-              "RelativeToolTip": "ECommerce.Server\\Data\\EcommerceDbContext.cs",
-              "ViewState": "AgIAABgBAAAAAAAAAAAwwC8BAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-17T15:40:11.537Z",
               "EditorCaption": ""
             }
           ]

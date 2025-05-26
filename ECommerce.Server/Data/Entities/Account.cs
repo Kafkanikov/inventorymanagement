@@ -42,7 +42,7 @@
             [ForeignKey("SubCategoryID")]
             public virtual AccountSubCategory? AccountSubCategory { get; set; }
 
-            public virtual ICollection<JournalEntry> JournalEntries { get; set; } = new List<JournalEntry>();
+            public virtual ICollection<JournalPost> JournalEntries { get; set; } = new List<JournalPost>();
         }
     }
 }
