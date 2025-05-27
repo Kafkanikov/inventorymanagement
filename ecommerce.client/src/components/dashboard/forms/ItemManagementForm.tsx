@@ -392,7 +392,6 @@ export const ItemManagementForm: React.FC = () => {
       setItemDetailToDeleteId(null);
     }
   };
-  console.log(JSON.stringify(itemDetailsCache));
   return (
     <Card>
       <CardHeader>

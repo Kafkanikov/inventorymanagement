@@ -332,7 +332,7 @@ export interface SaleReadDto {
   stockName?: string; // Denormalized for display
   // customerID?: number;
   // customerName?: string;
-  price: number; // Total price of the sale
+  totalPrice: number; // Total price of the sale
   disabled: boolean;
   details: SaleDetailReadDto[];
 }

@@ -79,7 +79,7 @@ export const Sidebar: React.FC = () => {
             <NavItem to="/dashboard/purchases" icon={ShoppingCart} label="Purchases" />
             <NavItem to="/dashboard/sales" icon={Landmark} label="Sales" />
             <NavItem to="/dashboard/inventory" icon={Boxes} label="Inventory/Stock" />
-
+            <NavItem to="/dashboard/reports" icon={FileSpreadsheetIcon} label="Reports" />
             <Collapsible open={isAddOpen} onOpenChange={setIsAddOpen}>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" className="w-full justify-start pl-3">

@@ -2,6 +2,7 @@
 using ECommerce.Server.Data.DTO.Request;
 using ECommerce.Server.Data.DTO.Response;
 using ECommerce.Server.Data.Entities;
+using ECommerce.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,18 @@ namespace ECommerce.Server.Services
     {
         private readonly EcommerceDbContext _context;
         private readonly IInventoryLogService _inventoryLogService;
+        private readonly IJournalService _journalService;
 
-        public SaleService(EcommerceDbContext context, IInventoryLogService inventoryLogService)
+        private const string CASH = "1111020100"; 
+        private const string SALES_REVENUE_ACCOUNT_NUMBER = "5000020000";     
+        private const string COGS_ACCOUNT_NUMBER = "6000020000";              
+        private const string INVENTORY_ACCOUNT_NUMBER = "2100020000";
+
+        public SaleService(EcommerceDbContext context, IInventoryLogService inventoryLogService, IJournalService journalService)
         {
             _context = context;
             _inventoryLogService = inventoryLogService;
+            _journalService = journalService;
         }
         private async Task<decimal?> GetCurrentWeightedAverageCostPerBaseUnitAsync(int itemId)
         {
@@ -278,6 +286,59 @@ namespace ECommerce.Server.Services
                             await transaction.RollbackAsync();
                             // Log error
                             return null;
+                        }
+                        var journalPageDto = new JournalPageCreateDto
+                        {
+                            CurrencyID = 1,
+                            Ref = sale.Code, // Reference the sale code
+                            Source = "Sale",
+                            Description = $"Sale transaction: {sale.Code}, Total: {sale.Price:C}, COGS: {sale.TotalCOGS:C}",
+                            JournalEntries = new List<JournalPostCreateDto>
+                        {
+                            // 1. Debit Accounts Receivable
+                            new JournalPostCreateDto
+                            {
+                                AccountNumber = CASH,
+                                Description = $"Cash On Hand:USD for Sale {sale.Code}",
+                                Debit = sale.Price ?? 0,
+                                Credit = 0,
+                                Ref = sale.Code
+                            },
+                            // 2. Credit Sales Revenue
+                            new JournalPostCreateDto
+                            {
+                                AccountNumber = SALES_REVENUE_ACCOUNT_NUMBER,
+                                Description = $"Sales Revenue for Sale {sale.Code}",
+                                Debit = 0,
+                                Credit = sale.Price ?? 0,
+                                Ref = sale.Code
+                            },
+                            // 3. Debit Cost of Goods Sold (COGS)
+                            new JournalPostCreateDto
+                            {
+                                AccountNumber = COGS_ACCOUNT_NUMBER,
+                                Description = $"COGS for Sale {sale.Code}",
+                                Debit = sale.TotalCOGS ?? 0,
+                                Credit = 0,
+                                Ref = sale.Code
+                            },
+                            // 4. Credit Inventory
+                            new JournalPostCreateDto
+                            {
+                                AccountNumber = INVENTORY_ACCOUNT_NUMBER,
+                                Description = $"Inventory reduction for Sale {sale.Code}",
+                                Debit = 0,
+                                Credit = sale.TotalCOGS ?? 0,
+                                Ref = sale.Code
+                            }
+                            }
+                        };
+
+                        var journalResult = await _journalService.CreateJournalPageAsync(journalPageDto, performingUserId);
+                        if (journalResult == null)
+                        {
+                            await transaction.RollbackAsync();
+                            throw new Exception("Failed to create journal entries for the sale.");
                         }
                     }
 

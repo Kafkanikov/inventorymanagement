@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ECommerce.Server.Interfaces;
 
 namespace ECommerce.Server.Services
 {
@@ -15,14 +16,18 @@ namespace ECommerce.Server.Services
     {
         private readonly EcommerceDbContext _context;
         private readonly IInventoryLogService _inventoryLogService;
+        private readonly IJournalService _journalService;
 
-        public PurchaseService(EcommerceDbContext context, IInventoryLogService inventoryLogService)
+        private const string INVENTORY_ACCOUNT_NUMBER = "2100020000"; // Example: Inventory Asset Account
+        private const string CASH_ACCOUNT_NUMBER = "1111020100";
+
+        public PurchaseService(EcommerceDbContext context, IInventoryLogService inventoryLogService, IJournalService journalService)
         {
             _context = context;
             _inventoryLogService = inventoryLogService;
+            _journalService = journalService;
         }
 
-        // Helper to generate next code (Option A: Query Max Existing Code)
         private async Task<string> GenerateNextPurchaseCodeAsync(string prefix = "PUR", int numericPartLength = 5)
         {
             string prefixWithSeparator = $"{prefix}-";
@@ -177,10 +182,10 @@ namespace ECommerce.Server.Services
                 try
                 {
                     _context.Purchases.Add(purchase);
-                    // EF Core will also add the PurchaseDetails due to the collection assignment if correctly configured,
-                    // or add them explicitly: _context.PurchaseDetails.AddRange(purchaseDetailEntities);
+                    
                     await _context.SaveChangesAsync(); // Saves Purchase and its PurchaseDetails
-                    // Now, create InventoryLog entries manually
+
+                    //Create InventoryLog entries manually
                     foreach (var (idEntity, pdDto) in detailsForInventoryLog)
                     {
                         // Ensure Qty and Cost from DTO are valid before division
@@ -225,6 +230,41 @@ namespace ECommerce.Server.Services
                         }
                     }
 
+                    var journalPageDto = new JournalPageCreateDto
+                    {
+                        CurrencyID = 1,
+                        Ref = purchase.Code, // Reference the purchase code
+                        Source = "Purchase",
+                        Description = $"Purchase from supplier: {supplier.Name}, Code: {purchase.Code}",
+                        JournalEntries = new List<JournalPostCreateDto>
+                        {
+                            new JournalPostCreateDto // Debit Inventory
+                            {
+                                AccountNumber = INVENTORY_ACCOUNT_NUMBER, 
+                                Description = $"Inventory purchased - {purchase.Code}",
+                                Debit = purchase.Cost ?? 0, 
+                                Credit = 0,
+                                Ref = purchase.Code 
+                            },
+                            new JournalPostCreateDto // Credit Cash/Accounts Payable
+                            {
+                                AccountNumber = CASH_ACCOUNT_NUMBER, 
+                                Description = $"Payment for purchase - {purchase.Code}",
+                                Debit = 0,
+                                Credit = purchase.Cost ?? 0, 
+                                Ref = purchase.Code 
+                            }
+                        }
+                    };
+
+                    var journalResult = await _journalService.CreateJournalPageAsync(journalPageDto, performingUserId);
+
+                    if (journalResult == null)
+                    {
+                        await transaction.RollbackAsync();
+                        throw new Exception("Failed to create journal entries for the purchase.");
+                    }
+
                     await transaction.CommitAsync();
                 }
                 catch (DbUpdateException ex) // Catches issues from SaveChangesAsync (Purchase/Details or CodeSequence)
@@ -234,17 +274,14 @@ namespace ECommerce.Server.Services
                     if (ex.InnerException?.Message.Contains("UNIQUE KEY constraint") == true &&
                         (ex.InnerException.Message.Contains(purchase.Code) || ex.InnerException.Message.Contains("UK_Purchase_Code")))
                     {
-                        // Log: Code conflict for Purchase Code
                         return null;
                     }
-                    // Consider if other unique constraints (e.g., from ItemDetails if not pre-checked) could fail here.
-                    throw; // Re-throw if it's an unexpected DB issue
+                    throw;
                 }
-                catch (Exception ex) // Catch other potential errors (e.g., from InventoryLogService call)
+                catch (Exception ex) 
                 {
                     await transaction.RollbackAsync();
-                    // Log ex
-                    throw; // Re-throw
+                    throw; 
                 }
             }
 

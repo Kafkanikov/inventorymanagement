@@ -119,7 +119,7 @@ export const SaleView: React.FC = () => {
                     <TableCell>{format(new Date(sale.date), 'PP')}</TableCell>
                     {/* <TableCell>{sale.customerName || `ID: ${sale.customerID}`}</TableCell> */}
                     <TableCell>{sale.stockName || `ID: ${sale.stockID}`}</TableCell>
-                    <TableCell className="text-right">${sale.details[0].linePrice.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">${sale.totalPrice}</TableCell>
                      <TableCell className="text-right">
                       <Button variant="outline" size="sm" onClick={() => handleViewSale(sale)}>
                         <Eye className="mr-1 h-4 w-4" /> View
@@ -184,7 +184,7 @@ export const SaleView: React.FC = () => {
                 </TableBody>
               </Table>
               <div className="text-right font-bold mt-4">
-                Total Price: ${viewingSale.price.toFixed(2)}
+                Total Price: ${viewingSale.totalPrice.toFixed(2)}
               </div>
             </div>
              <div className="flex justify-end pt-4">

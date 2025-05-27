@@ -9,7 +9,7 @@ export const DashboardLayout: React.FC = () => {
     <div className="flex h-screen bg-muted/40">
       <Sidebar />
       <div className="flex flex-col flex-1">
-        <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-muted/40 px-6 sticky top-0 z-30 dark:bg-zinc-950">
+        <header className="no-print flex h-14 lg:h-[60px] items-center gap-4 border-b bg-muted/40 px-6 sticky top-0 z-30 dark:bg-zinc-950">
           {/* You can add a mobile nav toggle here */}
           <div className="flex-1">
             {/* Optional: Breadcrumbs or Page Title here */}
