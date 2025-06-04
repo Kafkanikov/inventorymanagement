@@ -118,7 +118,7 @@ export const PurchaseView: React.FC = () => {
                     <TableCell>{format(new Date(purchase.date), 'PP')}</TableCell>
                     <TableCell>{purchase.supplierName || `ID: ${purchase.supplierID}`}</TableCell>
                     <TableCell>{purchase.stockName || `ID: ${purchase.stockID}`}</TableCell>
-                    <TableCell className="text-right">${purchase.details[0].cost.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">${purchase.totalCost.toFixed(2)}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="outline" size="sm" onClick={() => handleViewPurchase(purchase)}>
                         <Eye className="mr-1 h-4 w-4" /> View
@@ -183,7 +183,7 @@ export const PurchaseView: React.FC = () => {
                 </TableBody>
               </Table>
               <div className="text-right font-bold mt-4">
-                Total Cost: ${viewingPurchase.details[0].cost.toFixed(2)}
+                Total Cost: ${viewingPurchase.totalCost.toFixed(2)}
               </div>
             </div>
              <div className="flex justify-end pt-4">

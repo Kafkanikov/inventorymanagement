@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton"; 
 import { toast } from "sonner";
+import { ModeToggle } from '../ui/ModeToggle';
 
 
 export const AuthStatus: React.FC = () => {
@@ -28,6 +29,7 @@ export const AuthStatus: React.FC = () => {
     <div className="flex items-center space-x-4 p-4">
       {isAuthenticated && user && (
         <>
+          <ModeToggle />
           <span>Welcome, {user.username}!</span>
           <Button variant="outline" onClick={handleLogout} disabled={isLoading}>
             Logout

@@ -11,12 +11,14 @@ namespace ECommerce.Server.Services
     public class JournalService : IJournalService
     {
         private readonly EcommerceDbContext _context;
-        private readonly IUserService _userService; 
+        private readonly IUserService _userService;
+        private readonly ILogger<JournalService> _logger;
 
-        public JournalService(EcommerceDbContext context, IUserService userService)
+        public JournalService(EcommerceDbContext context, IUserService userService, ILogger<JournalService> logger)
         {
             _context = context;
             _userService = userService;
+            _logger = logger;
         }
 
         public async Task<JournalPageReadDto?> CreateJournalPageAsync(JournalPageCreateDto journalPageDto, int performingUserId)
@@ -104,30 +106,31 @@ namespace ECommerce.Server.Services
                 Console.WriteLine($"JournalService.CreateJournalPageAsync: Generic Exception: {ex.ToString()}");
                 throw;
             }
-            return await GetJournalPageReadDtoByIdAsync(journalPage.ID);
+            return await GetJournalPageByIdAsync(journalPage.ID);
         }
 
-        // Helper method to construct the ReadDTO (can be expanded)
-        private async Task<JournalPageReadDto?> GetJournalPageReadDtoByIdAsync(int journalPageId)
+        public async Task<JournalPageReadDto?> GetJournalPageByIdAsync(int journalPageId)
         {
+            _logger.LogInformation("JournalService.GetJournalPageByIdAsync: Fetching page ID {JournalPageId}.", journalPageId);
             var journalPage = await _context.JournalPages
                 .Include(jp => jp.User)
                 .Include(jp => jp.JournalEntries)
-                    .ThenInclude(je => je.AccountEntity) // To get Account Name
-                        .ThenInclude(acc => acc.AccountCategory) // To get Account Category if needed for AccountName construction
+                    .ThenInclude(je => je.AccountEntity)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(jp => jp.ID == journalPageId);
 
-            if (journalPage == null) return null;
-
-            var userDto = await _userService.GetUserByIdAsync(journalPage.UserID ?? 0);
-
+            if (journalPage == null)
+            {
+                _logger.LogWarning("JournalService.GetJournalPageByIdAsync: Page ID {JournalPageId} not found.", journalPageId);
+                return null;
+            }
 
             return new JournalPageReadDto
             {
                 ID = journalPage.ID,
                 CurrencyID = journalPage.CurrencyID,
                 UserID = journalPage.UserID,
-                Username = userDto?.Username,
+                Username = journalPage.User?.Username, // User can be null if UserID is nullable and not set
                 Ref = journalPage.Ref,
                 Source = journalPage.Source,
                 CreatedAt = journalPage.CreatedAt,
@@ -145,8 +148,87 @@ namespace ECommerce.Server.Services
                 }).ToList(),
                 TotalDebits = journalPage.JournalEntries.Sum(e => e.Debit),
                 TotalCredits = journalPage.JournalEntries.Sum(e => e.Credit),
-                IsBalanced = journalPage.JournalEntries.Sum(e => e.Debit) == journalPage.JournalEntries.Sum(e => e.Credit)
+                IsBalanced = Math.Abs(journalPage.JournalEntries.Sum(e => e.Debit) - journalPage.JournalEntries.Sum(e => e.Credit)) < 0.0001m
             };
+        }
+
+        public async Task<(IEnumerable<JournalPageReadDto> Pages, int TotalCount)> GetAllJournalPagesAsync(JournalLedgerQueryParametersDto queryParams)
+        {
+            _logger.LogInformation("JournalService.GetAllJournalPagesLedgerAsync: Fetching journal pages with params: {@QueryParams}", queryParams);
+
+            var query = _context.JournalPages
+                .Include(jp => jp.User) // For Username
+                .Include(jp => jp.JournalEntries)
+                    .ThenInclude(je => je.AccountEntity) // For AccountName
+                .AsQueryable();
+
+            if (!queryParams.IncludeDisabledPages)
+            {
+                query = query.Where(jp => !jp.Disabled);
+            }
+            if (queryParams.StartDate.HasValue)
+            {
+                query = query.Where(jp => jp.CreatedAt.Date >= queryParams.StartDate.Value.Date);
+            }
+            if (queryParams.EndDate.HasValue)
+            {
+                query = query.Where(jp => jp.CreatedAt.Date <= queryParams.EndDate.Value.Date);
+            }
+            if (!string.IsNullOrWhiteSpace(queryParams.RefContains))
+            {
+                query = query.Where(jp => jp.Ref != null && jp.Ref.Contains(queryParams.RefContains));
+            }
+            if (!string.IsNullOrWhiteSpace(queryParams.SourceContains))
+            {
+                query = query.Where(jp => jp.Source.Contains(queryParams.SourceContains));
+            }
+            if (!string.IsNullOrWhiteSpace(queryParams.DescriptionContains))
+            {
+                query = query.Where(jp => jp.Description.Contains(queryParams.DescriptionContains));
+            }
+            if (queryParams.UserId.HasValue)
+            {
+                query = query.Where(jp => jp.UserID == queryParams.UserId.Value);
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var journalPages = await query
+                .OrderByDescending(jp => jp.CreatedAt) // Or by ID, or user preference
+                .ThenByDescending(jp => jp.ID)
+                .Skip((queryParams.PageNumber - 1) * queryParams.PageSize)
+                .Take(queryParams.PageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            _logger.LogInformation("JournalService.GetAllJournalPagesLedgerAsync: Fetched {Count} journal pages out of {TotalCount} total.", journalPages.Count, totalCount);
+
+            var resultDto = journalPages.Select(jp => new JournalPageReadDto
+            {
+                ID = jp.ID,
+                CreatedAt = jp.CreatedAt,
+                Ref = jp.Ref,
+                Source = jp.Source,
+                Description = jp.Description,
+                Username = jp.User?.Username,
+                UserID = jp.UserID,
+                Disabled = jp.Disabled,
+                TotalDebits = jp.JournalEntries.Sum(e => e.Debit),
+                TotalCredits = jp.JournalEntries.Sum(e => e.Credit),
+                JournalEntries = jp.JournalEntries.Select(je => new JournalPostReadDto
+                {
+                    ID = je.ID,
+                    AccountNumber = je.Account,
+                    AccountName = je.AccountEntity?.Name ?? "N/A",
+                    Ref = je.Ref,
+                    Description = je.Description,
+                    Debit = je.Debit,
+                    Credit = je.Credit
+                }).ToList(),
+                IsBalanced = Math.Abs(jp.JournalEntries.Sum(e => e.Debit) - jp.JournalEntries.Sum(e => e.Credit)) < 0.0001m
+            }).ToList();
+
+            return (resultDto, totalCount);
         }
     }
 }

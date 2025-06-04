@@ -31,10 +31,6 @@
             [Column("Bal")] 
             public string NormalBalance { get; set; } 
 
-            // Inferred property for currency (parsed from Name or ideally a separate column)
-            [NotMapped] // This won't be in the DB unless you add a column
-            public string? CurrencyCode { get; set; } 
-
             // Navigation properties
             [ForeignKey("CategoryID")]
             public virtual AccountCategory AccountCategory { get; set; }

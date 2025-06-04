@@ -1,4 +1,4 @@
-﻿using ECommerce.Server.Data;
+﻿ using ECommerce.Server.Data;
 using ECommerce.Server.Data.DTO.Request;
 using ECommerce.Server.Data.DTO.Response;
 using ECommerce.Server.Data.Entities.ECommerce.Server.Data.Entities; // For Account
@@ -399,6 +399,227 @@ namespace ECommerce.Server.Services
                 IsBalanced = Math.Abs(reportTotalDebits - reportTotalCredits) < 0.015m, // Using a small tolerance
                 ReportTitle = $"Trial Balance as of {requestParams.AsOfDate:dd/MM/yyyy}"
             };
+        }
+        private async Task<Dictionary<string, (decimal CurrentMonth, decimal YearToDate)>> CalculateAccountPeriodBalances(
+            DateTime asOfDate,
+            string reportCurrency,
+            decimal? khrToReportCurrencyExchangeRate,
+            IEnumerable<Account> accountsToProcess)
+        {
+            var result = new Dictionary<string, (decimal CurrentMonth, decimal YearToDate)>();
+
+            DateTime monthStartDate = new DateTime(asOfDate.Year, asOfDate.Month, 1);
+            DateTime yearStartDate = new DateTime(asOfDate.Year, 1, 1);
+
+            var accountNumbersToProcess = accountsToProcess.Select(a => a.AccountNumber).ToList();
+
+            var allRelevantJournalEntries = await _context.JournalEntries
+                .Include(je => je.JournalPage)
+                .Where(je => accountNumbersToProcess.Contains(je.Account) &&
+                             je.JournalPage.CreatedAt >= yearStartDate &&
+                             je.JournalPage.CreatedAt <= asOfDate &&
+                             !je.JournalPage.Disabled)
+                .ToListAsync();
+
+            foreach (var acc in accountsToProcess)
+            {
+                var accountEntries = allRelevantJournalEntries.Where(je => je.Account == acc.AccountNumber).ToList();
+
+                decimal ytdDebitsNative = accountEntries.Sum(e => e.Debit);
+                decimal ytdCreditsNative = accountEntries.Sum(e => e.Credit);
+
+                decimal monthDebitsNative = accountEntries
+                    .Where(e => e.JournalPage.CreatedAt >= monthStartDate)
+                    .Sum(e => e.Debit);
+                decimal monthCreditsNative = accountEntries
+                    .Where(e => e.JournalPage.CreatedAt >= monthStartDate)
+                    .Sum(e => e.Credit);
+
+                string nativeCurrencyCode = "USD";
+                if (acc.Name.EndsWith(": KHR", StringComparison.OrdinalIgnoreCase) || acc.Name.StartsWith("KHR ") || acc.Name.IndexOf(" KHR ", StringComparison.OrdinalIgnoreCase) >= 0) nativeCurrencyCode = "KHR";
+
+                Func<decimal, decimal> convertToReport = (nativeAmount) => {
+                    decimal convertedAmount = nativeAmount;
+                    if (nativeCurrencyCode == "KHR" && reportCurrency == "USD")
+                    {
+                        if (!khrToReportCurrencyExchangeRate.HasValue || khrToReportCurrencyExchangeRate.Value == 0)
+                            throw new ArgumentException("KHR to USD exchange rate missing or zero.");
+                        convertedAmount = nativeAmount / khrToReportCurrencyExchangeRate.Value;
+                    }
+                    else if (nativeCurrencyCode == "USD" && reportCurrency == "KHR")
+                    {
+                        if (!khrToReportCurrencyExchangeRate.HasValue)
+                            throw new ArgumentException("USD to KHR exchange rate missing.");
+                        convertedAmount = nativeAmount * khrToReportCurrencyExchangeRate.Value;
+                    }
+                    return Math.Round(convertedAmount, 2);
+                };
+
+                decimal ytdDebitsReport = convertToReport(ytdDebitsNative);
+                decimal ytdCreditsReport = convertToReport(ytdCreditsNative);
+                decimal monthDebitsReport = convertToReport(monthDebitsNative);
+                decimal monthCreditsReport = convertToReport(monthCreditsNative);
+
+                decimal currentMonthNetChange;
+                decimal yearToDateNetChange;
+
+                if (acc.AccountCategory?.Name.Equals(INCOME_CATEGORY, StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    currentMonthNetChange = monthCreditsReport - monthDebitsReport;
+                    yearToDateNetChange = ytdCreditsReport - ytdDebitsReport;
+                }
+                else if (acc.AccountCategory?.Name.Equals(EXPENSE_CATEGORY, StringComparison.OrdinalIgnoreCase) == true ||
+                         acc.AccountCategory?.Name.Equals(COGS_CATEGORY, StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    currentMonthNetChange = monthDebitsReport - monthCreditsReport;
+                    yearToDateNetChange = ytdDebitsReport - ytdCreditsReport;
+                }
+                else
+                {
+                    currentMonthNetChange = 0;
+                    yearToDateNetChange = 0;
+                    _logger.LogWarning("Account {AccountNumber} ({AccountName}) is not classified as Income, Expense, or COGS for P&L calculation.", acc.AccountNumber, acc.Name);
+                }
+                result[acc.AccountNumber] = (currentMonthNetChange, yearToDateNetChange);
+            }
+            return result;
+        }
+
+        public async Task<ProfitLossReportDto?> GetProfitLossReportAsync(BalanceSheetRequestParams requestParams)
+        {
+            _logger.LogInformation("GetProfitLossReportAsync called with params: {@RequestParams}", requestParams);
+
+            var relevantAccounts = await _context.Accounts
+                .Include(a => a.AccountCategory)
+                .Include(a => a.AccountSubCategory)
+                .Where(a => a.AccountCategory != null &&
+                             (a.AccountCategory.Name == INCOME_CATEGORY ||
+                              a.AccountCategory.Name == EXPENSE_CATEGORY ||
+                              a.AccountCategory.Name == COGS_CATEGORY)
+                      )
+                .AsNoTracking()
+                .ToListAsync();
+
+            if (!relevantAccounts.Any())
+            {
+                // Handle no relevant accounts found...
+                _logger.LogWarning("No Income, Expense, or COGS accounts found.");
+                return new ProfitLossReportDto
+                {
+                    AsOfDate = requestParams.AsOfDate,
+                    ReportTitle = $"Profit & Loss Statement - No Relevant Accounts",
+                    ReportCurrency = requestParams.ReportCurrency,
+                    ReportingCurrencySymbol = requestParams.ReportCurrency == "USD" ? "$" : "៛",
+                    RevenueSection = new ProfitLossSectionDto { SectionName = "Revenue" },
+                    CostOfGoodsSoldSection = new ProfitLossSectionDto { SectionName = "Cost of Goods Sold" },
+                    OperatingExpenseSection = new ProfitLossSectionDto { SectionName = "Operating Expenses" }
+                };
+            }
+
+            var accountBalances = await CalculateAccountPeriodBalances(
+                requestParams.AsOfDate,
+                requestParams.ReportCurrency,
+                requestParams.KhrToReportCurrencyExchangeRate,
+                relevantAccounts
+            );
+
+            var report = new ProfitLossReportDto
+            {
+                AsOfDate = requestParams.AsOfDate,
+                ReportTitle = $"Profit & Loss Statement for period ending {requestParams.AsOfDate:MMMM dd, yyyy}",
+                ReportCurrency = requestParams.ReportCurrency,
+                ReportingCurrencySymbol = requestParams.ReportCurrency == "USD" ? "$" : "៛",
+                RevenueSection = new ProfitLossSectionDto { SectionName = "Revenue" },
+                CostOfGoodsSoldSection = new ProfitLossSectionDto { SectionName = "Cost of Goods Sold" },
+                OperatingExpenseSection = new ProfitLossSectionDto { SectionName = "Operating Expenses" }
+            };
+
+            // **MODIFIED LOGIC FOR REVENUE SECTION**
+            var revenueAccounts = relevantAccounts.Where(a => a.AccountCategory.Name == INCOME_CATEGORY);
+            var revenueSubGroups = revenueAccounts
+                .GroupBy(a => a.AccountSubCategory?.Name ?? "General Revenue") // Group by sub-category
+                .OrderBy(g => g.Key);
+
+            foreach (var subGroupData in revenueSubGroups)
+            {
+                var plSubGroup = new ProfitLossSubGroupDto { SubGroupName = subGroupData.Key };
+                foreach (var acc in subGroupData.OrderBy(a => a.AccountNumber))
+                {
+                    if (accountBalances.TryGetValue(acc.AccountNumber, out var balances))
+                    {
+                        plSubGroup.Accounts.Add(new ProfitLossAccountLineDto
+                        {
+                            AccountNumber = acc.AccountNumber,
+                            AccountName = acc.Name,
+                            CurrentMonthAmount = balances.CurrentMonth,
+                            YearToDateAmount = balances.YearToDate
+                        });
+                    }
+                }
+                plSubGroup.TotalCurrentMonth = plSubGroup.Accounts.Sum(a => a.CurrentMonthAmount);
+                plSubGroup.TotalYearToDate = plSubGroup.Accounts.Sum(a => a.YearToDateAmount);
+                report.RevenueSection.SubGroups.Add(plSubGroup); // Add to SubGroups list
+            }
+            report.RevenueSection.TotalCurrentMonth = report.RevenueSection.SubGroups.Sum(sg => sg.TotalCurrentMonth);
+            report.RevenueSection.TotalYearToDate = report.RevenueSection.SubGroups.Sum(sg => sg.TotalYearToDate);
+            // **END OF MODIFIED LOGIC**
+
+            // Populate COGS (assuming it's a direct list, but can be grouped like revenue if needed)
+            var cogsAccounts = relevantAccounts.Where(a => a.AccountCategory.Name == COGS_CATEGORY);
+            foreach (var acc in cogsAccounts.OrderBy(a => a.AccountNumber))
+            {
+                if (accountBalances.TryGetValue(acc.AccountNumber, out var balances))
+                {
+                    report.CostOfGoodsSoldSection.Accounts.Add(new ProfitLossAccountLineDto
+                    {
+                        AccountNumber = acc.AccountNumber,
+                        AccountName = acc.Name,
+                        CurrentMonthAmount = balances.CurrentMonth,
+                        YearToDateAmount = balances.YearToDate
+                    });
+                }
+            }
+            report.CostOfGoodsSoldSection.TotalCurrentMonth = report.CostOfGoodsSoldSection.Accounts.Sum(a => a.CurrentMonthAmount);
+            report.CostOfGoodsSoldSection.TotalYearToDate = report.CostOfGoodsSoldSection.Accounts.Sum(a => a.YearToDateAmount);
+
+            report.GrossProfitCurrentMonth = report.RevenueSection.TotalCurrentMonth - report.CostOfGoodsSoldSection.TotalCurrentMonth;
+            report.GrossProfitYearToDate = report.RevenueSection.TotalYearToDate - report.CostOfGoodsSoldSection.TotalYearToDate;
+
+            // Populate Operating Expenses (already grouped by sub-category)
+            var operatingExpenseAccounts = relevantAccounts.Where(a => a.AccountCategory.Name == EXPENSE_CATEGORY);
+            var expenseSubGroups = operatingExpenseAccounts
+                .GroupBy(a => a.AccountSubCategory?.Name ?? "Other Operating Expenses")
+                .OrderBy(g => g.Key);
+
+            foreach (var subGroupData in expenseSubGroups)
+            {
+                var plSubGroup = new ProfitLossSubGroupDto { SubGroupName = subGroupData.Key };
+                foreach (var acc in subGroupData.OrderBy(a => a.AccountNumber))
+                {
+                    if (accountBalances.TryGetValue(acc.AccountNumber, out var balances))
+                    {
+                        plSubGroup.Accounts.Add(new ProfitLossAccountLineDto
+                        {
+                            AccountNumber = acc.AccountNumber,
+                            AccountName = acc.Name,
+                            CurrentMonthAmount = balances.CurrentMonth,
+                            YearToDateAmount = balances.YearToDate
+                        });
+                    }
+                }
+                plSubGroup.TotalCurrentMonth = plSubGroup.Accounts.Sum(a => a.CurrentMonthAmount);
+                plSubGroup.TotalYearToDate = plSubGroup.Accounts.Sum(a => a.YearToDateAmount);
+                report.OperatingExpenseSection.SubGroups.Add(plSubGroup);
+            }
+            report.OperatingExpenseSection.TotalCurrentMonth = report.OperatingExpenseSection.SubGroups.Sum(sg => sg.TotalCurrentMonth);
+            report.OperatingExpenseSection.TotalYearToDate = report.OperatingExpenseSection.SubGroups.Sum(sg => sg.TotalYearToDate);
+
+            report.NetIncomeCurrentMonth = report.GrossProfitCurrentMonth - report.OperatingExpenseSection.TotalCurrentMonth;
+            report.NetIncomeYearToDate = report.GrossProfitYearToDate - report.OperatingExpenseSection.TotalYearToDate;
+
+            _logger.LogInformation("Profit & Loss Report generated successfully. NetIncomeYTD: {NetIncomeYTD}", report.NetIncomeYearToDate);
+
+            return report;
         }
     }
 }

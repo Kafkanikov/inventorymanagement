@@ -19,8 +19,8 @@ import { format, parseISO, isValid } from 'date-fns';
 import { BalanceSheetViewInternal } from '../reports/BalanceSheetViewInternal'; 
 import { TrialBalanceViewInternal } from '../reports/TrialBalanceViewInternal'; 
 
-const BALANCE_SHEET_API_URL = '/api/accountingreports/balancesheet';
-const TRIAL_BALANCE_API_URL = '/api/accountingreports/trialbalance';
+const BALANCE_SHEET_API_URL = '/api/accounting/balancesheet';
+const TRIAL_BALANCE_API_URL = '/api/accounting/trialbalance';
 
 type ReportType = 'balanceSheet' | 'trialBalance';
 
@@ -110,7 +110,7 @@ export const FinancialReportsContainer: React.FC = () => {
             } else {
                 setTrialBalanceData(data as TrialBalanceReport);
             }
-            toast.success("Report Generated", { description: `${reportName} as of ${format(parseISO(dateStringToAppend), 'PP')} fetched.` });
+            toast.success("Report Generated", { description: `${reportName} as of ${format(parseISO(dateStringToAppend), 'PP')} fetched.`, className: 'no-print' });
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
             setError(errorMessage);
@@ -130,7 +130,7 @@ export const FinancialReportsContainer: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                        <div>
+                        <div className='gap-1 flex flex-col'>
                             <Label htmlFor="reportAsOfDate">As of Date*</Label>
                             <DatePicker
                                 date={reportParams.asOfDate && isValid(parseISO(reportParams.asOfDate)) ? parseISO(reportParams.asOfDate) : new Date()}
@@ -138,7 +138,7 @@ export const FinancialReportsContainer: React.FC = () => {
                                 className="w-full"
                             />
                         </div>
-                        <div>
+                        <div className='gap-1 flex flex-col'>
                             <Label htmlFor="reportReportCurrency">Report Currency*</Label>
                             <Select
                                 value={reportParams.reportCurrency}
@@ -151,7 +151,7 @@ export const FinancialReportsContainer: React.FC = () => {
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div>
+                        <div className='gap-1 flex flex-col'>
                             <Label htmlFor="reportKhrExchangeRate">KHR per Foreign Unit Rate</Label>
                             <Input
                                 id="reportKhrExchangeRate"
@@ -161,7 +161,6 @@ export const FinancialReportsContainer: React.FC = () => {
                                 onChange={(e) => handleParamChange('khrtoReportCurrencyExchangeRate', e.target.value === '' ? null : parseFloat(e.target.value))}
                                 step="any"
                             />
-                            <p className="text-xs text-muted-foreground mt-1">Required if accounts have mixed currencies.</p>
                         </div>
                     </div>
                 </CardContent>

@@ -286,7 +286,7 @@ export interface PurchaseReadDto {
   supplierName?: string; // Denormalized for display
   stockID: number;
   stockName?: string; // Denormalized for display
-  cost: number; // Total cost of the purchase
+  totalCost: number; // Total cost of the purchase
   disabled: boolean;
   details: PurchaseDetailReadDto[];
 }

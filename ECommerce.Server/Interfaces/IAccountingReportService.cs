@@ -7,5 +7,6 @@ namespace ECommerce.Server.Interfaces
     {
         Task<BalanceSheetDataDto?> GetBalanceSheetAsync(BalanceSheetRequestParams requestParams);
         Task<TrialBalanceReportDto?> GetTrialBalanceAsync(TrialBalanceRequestParams requestParams);
+        Task<ProfitLossReportDto?> GetProfitLossReportAsync(BalanceSheetRequestParams requestParams);
     }
 }

@@ -118,7 +118,14 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-app.Run();
+try
+{
+    app.Run();
+} catch (Exception ex)
+{
+    Console.WriteLine($"FATAL UNHANDLED EXCEPTION: {ex.ToString()}");
+}
+
 async Task SeedInitialUser(EcommerceDbContext context, ILogger logger)
 {
     logger.LogInformation("Checking if initial user seeding is required...");

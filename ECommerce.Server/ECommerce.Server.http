@@ -12,6 +12,14 @@ Content-Type: application/json
 }
 
 ###
+GET {{ECommerce.Server_HostAddress}}/api/journal?startDate=2025-05-01&endDate=2025-05-30&includeDisabledPages=false&pageNumber=1&pageSize=10
+Content-Type: application/json
+{
 
-GET {{ECommerce.Server_HostAddress}}/api/accountingreports/balancesheet?AsOfDate=2025-05-26T00:00:00&ReportCurrency=USD&KhrToReportCurrencyExchangeRate=4150
+}
+
+###
+
+GET {{ECommerce.Server_HostAddress}}/api/accounting/chartofaccount
+
 ###

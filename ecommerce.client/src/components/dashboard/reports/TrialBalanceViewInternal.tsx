@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableCaption, TableFooter } from '@/components/ui/table';
 import { Printer } from 'lucide-react';
 import { TrialBalanceReport, TrialBalanceRequestParams } from '@/types/financial';
@@ -25,8 +25,8 @@ export const TrialBalanceViewInternal: React.FC<TrialBalanceViewInternalProps> =
             <h2 className="text-xl font-semibold print-report-title">{reportData.reportTitle}</h2>
             <p className="text-sm text-muted-foreground print-report-subtitle">
                 Reporting Currency: {reportData.reportingCurrencySymbol}
-                {reportParams.khrtoReportCurrencyExchangeRate && ` (Exchange Rate: ${reportParams.khrtoReportCurrencyExchangeRate} KHR per Foreign Unit)`}
-            </p>
+                {reportParams.khrtoReportCurrencyExchangeRate && ` (Exchange Rate: 1 USD = ${reportParams.khrtoReportCurrencyExchangeRate} KHR)`}
+            </p>  
         </div>
         <div className="text-right no-print">
             <Button onClick={handlePrint} variant="outline" size="sm">

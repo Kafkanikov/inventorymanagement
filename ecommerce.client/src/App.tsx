@@ -6,7 +6,7 @@ import { RegisterForm } from './components/auth/RegisterForm';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Skeleton } from './components/ui/skeleton';
 import { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { DashboardLayout } from './components/dashboard/DashboardLayout';
 import { InventoryLogView } from './components/dashboard/views/InventoryLogView';
@@ -20,10 +20,13 @@ import { UnitManagementForm } from './components/dashboard/forms/UnitManagementF
 import { Loader2 } from 'lucide-react';
 import { ItemManagementForm } from './components/dashboard/forms/ItemManagementForm';
 import { FinancialReportsContainer } from './components/dashboard/views/FinancialReportsContainer';
+import { ThemeProvider } from './contexts/theme-provider';
+import { JournalLedgerView } from './components/dashboard/views/JournalLedgerView';
+import { ProfitLossView } from './components/dashboard/reports/ProfitLossView';
 
 function AppContent() {
     const { isAuthenticated, isLoading, user } = useAuth();
-    const [showRegister, setShowRegister] = useState(false); // State to toggle forms
+    const [showRegister, setShowRegister] = useState(false); 
 
     // Navigation handlers
     const navigateToRegister = () => setShowRegister(true);
@@ -131,12 +134,18 @@ function AppContent() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate to="inventory" replace />} /> {/* Default to inventory */}
+            <Route index element={<Navigate to="inventory" replace />} />
             <Route path="inventory" element={<InventoryLogView />} />
             <Route path="purchases" element={<PurchaseView />} />
             <Route path="sales" element={<SaleView />} />
-            <Route path="reports" element={<FinancialReportsContainer />} />
-            <Route path="add"> 
+            <Route path="reports" element={<Outlet/>}>
+              <Route path="balance" element={<FinancialReportsContainer />} />
+              <Route path="profit-loss-report" element={< ProfitLossView />} />
+            </Route>
+            <Route path="finance" element={<Outlet/>}> 
+              <Route path="journal" element={<JournalLedgerView />} />
+            </Route>
+            <Route path="add" element={<Outlet/>}> 
               <Route path="item" element={<ItemManagementForm />} />
               <Route path="category" element={<CategoryManagementForm />} />
               <Route path="supplier" element={<SupplierManagementForm/>} />
@@ -186,10 +195,12 @@ const PublicAuthLayout: React.FC<{
 
 function App() {
     return (
-        <AuthProvider>
-          <AppContent />
-          <Toaster />
-        </AuthProvider>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <AuthProvider>
+            <AppContent />
+            <Toaster />
+          </AuthProvider>
+        </ThemeProvider>
       );
 }
 
