@@ -22,7 +22,8 @@ import {
   Banknote, // Added new icon
   NotebookPenIcon, // Added new icon
   Scale3D,
-  TrendingUp
+  TrendingUp,
+  Currency
   // CurrencyIcon, // Not used in the provided code, can be removed if not needed
   // Ban // Not used in the provided code, can be removed if not needed
 } from 'lucide-react';
@@ -183,6 +184,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             {isExpanded && (
               <CollapsibleContent className="space-y-0.5 pt-1 animate-in fade-in-50 zoom-in-95">
                 <NavItem to="/dashboard/finance/journal" icon={NotebookPenIcon} label="Journal Ledger" isSubItem isExpanded={isExpanded} exact={true} />
+                <NavItem to="/dashboard/finance/accounts" icon={Currency} label="Accounts" isSubItem isExpanded={isExpanded} exact={true} />
               </CollapsibleContent>
             )}
           </Collapsible>

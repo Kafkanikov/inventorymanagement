@@ -1,28 +1,27 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableCaption } from '@/components/ui/table';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, Search, RotateCcw, ChevronDown, ChevronRight, PlusCircle, AlertCircle } from 'lucide-react';
+import { Loader2, Search, RotateCcw, ChevronDown, ChevronRight, AlertCircle, PlusCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { JournalPageData, JournalLedgerQueryParameters } from '@/types/financial'; // Using updated DTOs
-import { ApiErrorResponse, QueryParametersBase, UserSelection } from '@/types/inventory'; // For error and base query params
+import { ApiErrorResponse, UserSelection } from '@/types/inventory'; // For error and base query params
 import { format, parseISO, isValid } from 'date-fns';
 import { formatCurrency, formatDateForDisplay } from '@/lib/utils'; // Assuming these exist
-import { useAuth } from '@/contexts/AuthContext'; // To get current user for default filter
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { JournalPageForm } from '../forms/JournalPageForm';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const API_URL = '/api/journal';
 const USERS_API_URL = '/api/users'; 
 
 export const JournalLedgerView: React.FC = () => {
-  const { user } = useAuth();
   const initialEndDate = new Date();
   const initialStartDate = new Date(initialEndDate.getFullYear(), initialEndDate.getMonth(), 1);
-
+  const [isCreatePageModalOpen, setIsCreatePageModalOpen] = useState(false); 
 
   const [journalPages, setJournalPages] = useState<JournalPageData[]>([]);
   const [queryParams, setQueryParams] = useState<JournalLedgerQueryParameters>({
@@ -44,6 +43,12 @@ export const JournalLedgerView: React.FC = () => {
   const [expandedPageIds, setExpandedPageIds] = useState<Set<number>>(new Set());
   const [availableUsers, setAvailableUsers] = useState<UserSelection[]>([]); 
 
+  const handleOpenCreatePageModal = () => setIsCreatePageModalOpen(true);
+  const handleCloseCreatePageModal = () => setIsCreatePageModalOpen(false);
+  const handleJournalPageCreated = () => {
+      handleCloseCreatePageModal();
+      fetchJournalLedger(1); // Refresh the ledger view from page 1
+  };
   const handleQueryParamChange = (field: keyof JournalLedgerQueryParameters, value: string | number | boolean | Date | null | undefined) => {
     let processedValue = value;
     if ((field === 'startDate' || field === 'endDate') && value instanceof Date && isValid(value)) {
@@ -218,6 +223,9 @@ export const JournalLedgerView: React.FC = () => {
             <Button variant="outline" onClick={handleResetFilters} disabled={isLoading} size="sm">
                 <RotateCcw className="mr-2 h-4 w-4" /> Reset
             </Button>
+            <Button onClick={handleOpenCreatePageModal} size="sm"> {/* New button */}
+              <PlusCircle className="mr-2 h-4 w-4" /> Create Journal Page
+            </Button>
         </div>
           </div>
         </CardContent>
@@ -336,6 +344,22 @@ export const JournalLedgerView: React.FC = () => {
           </CardContent>
         </Card>
       )}
+      <Dialog open={isCreatePageModalOpen} onOpenChange={setIsCreatePageModalOpen}>
+        <DialogContent className="sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Create New Journal Page</DialogTitle>
+            <DialogDescription>
+              Fill in the details for the new journal page and its entries. Debits must equal credits.
+            </DialogDescription>
+          </DialogHeader>
+          {isCreatePageModalOpen && ( 
+            <JournalPageForm
+              onSuccess={handleJournalPageCreated}
+              onCancel={handleCloseCreatePageModal}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

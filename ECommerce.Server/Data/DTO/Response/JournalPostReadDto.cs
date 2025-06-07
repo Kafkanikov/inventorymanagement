@@ -9,5 +9,11 @@
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
         public string? Ref { get; set; }
+
+        public int JournalPageID { get; set; }
+        public DateTime JournalPageDate { get; set; }
+        public string? JournalPageRef { get; set; }
+        public string JournalPageSource { get; set; }
+        public string? JournalPageUser { get; set; }
     }
 }

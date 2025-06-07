@@ -1,15 +1,15 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '@/components/ui/table';
-import { Loader2, Printer, FileText, AlertCircle } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Loader2, Printer, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { ProfitLossReport, ProfitLossRequestParams, ProfitLossSection, ProfitLossSubGroup, ProfitLossAccountLine } from '@/types/financial';
 import { ApiErrorResponse } from '@/types/inventory';
-import { format, parseISO, isValid } from 'date-fns';
+import { format } from 'date-fns';
 import { formatCurrency } from '@/lib/utils';
 
 const API_URL = '/api/accounting/profitloss';

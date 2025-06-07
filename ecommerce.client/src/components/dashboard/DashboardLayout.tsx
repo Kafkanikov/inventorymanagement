@@ -5,7 +5,6 @@ import { Sidebar } from './Sidebar';
 import { AuthStatus } from '../auth/AuthStatus'; // Assuming you want this visible
 import { PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ModeToggle } from '../ui/ModeToggle';
 
 export const DashboardLayout: React.FC = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);

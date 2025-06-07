@@ -23,6 +23,7 @@ import { FinancialReportsContainer } from './components/dashboard/views/Financia
 import { ThemeProvider } from './contexts/theme-provider';
 import { JournalLedgerView } from './components/dashboard/views/JournalLedgerView';
 import { ProfitLossView } from './components/dashboard/reports/ProfitLossView';
+import { AccountManagementView } from './components/dashboard/views/AccountManagementView';
 
 function AppContent() {
     const { isAuthenticated, isLoading, user } = useAuth();
@@ -144,6 +145,7 @@ function AppContent() {
             </Route>
             <Route path="finance" element={<Outlet/>}> 
               <Route path="journal" element={<JournalLedgerView />} />
+              <Route path="accounts" element={<AccountManagementView />} />
             </Route>
             <Route path="add" element={<Outlet/>}> 
               <Route path="item" element={<ItemManagementForm />} />

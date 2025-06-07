@@ -29,7 +29,9 @@
             [Required]
             [StringLength(10)]
             [Column("Bal")] 
-            public string NormalBalance { get; set; } 
+            public string NormalBalance { get; set; }
+            [Required]
+            public bool Disabled { get; set; } = false;
 
             // Navigation properties
             [ForeignKey("CategoryID")]
