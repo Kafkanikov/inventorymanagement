@@ -202,11 +202,15 @@ export const JournalPageForm: React.FC<JournalPageFormProps> = ({ onSuccess, onC
                 onValueChange={(value) => handleEntryChange(index, 'accountNumber', value)}
                 disabled={isSubmitting || accounts.length === 0}
               >
-                <SelectTrigger id={`je-account-${index}`}><SelectValue placeholder="Select account" /></SelectTrigger>
+                <SelectTrigger id={`je-account-${index}`}>
+                <SelectValue placeholder="Select account">
+                  {entry.accountNumber}
+                </SelectValue>
+                </SelectTrigger>
                 <SelectContent>
                   {accounts.map(acc => (
                     <SelectItem key={acc.id} value={acc.accountNumber}>
-                      {acc.accountNumber}
+                      {acc.accountNumber}: {acc.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
