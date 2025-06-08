@@ -28,11 +28,14 @@ import { formatDateForDisplay, formatCurrency } from '@/lib/utils';
 import { DatePicker } from '@/components/ui/date-picker';
 import { format, parseISO, isValid } from 'date-fns';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Separator } from '@/components/ui/separator';
 
 const ACCOUNTS_API_URL = '/api/accounts';
 
 const NONE_SELECT_VALUE = "_NONE_";
 const ALL_FILTER_VALUE = "_ALL_";
+const ADD_NEW_CATEGORY_VALUE = "_ADD_NEW_CATEGORY_";
+const ADD_NEW_SUBCATEGORY_VALUE = "_ADD_NEW_SUBCATEGORY_";
 
 
 export const AccountManagementView: React.FC = () => {
@@ -56,11 +59,20 @@ export const AccountManagementView: React.FC = () => {
   const [isLoadingJournals, setIsLoadingJournals] = useState(false);
 
   // Filters
-    const [filterName, setFilterName] = useState('');
-    const [filterCategory, setFilterCategory] = useState(ALL_FILTER_VALUE);
-    const [filterSubCategory, setFilterSubCategory] = useState(ALL_FILTER_VALUE);
-    const [filterIncludeDisabled, setFilterIncludeDisabled] = useState(false);
+  const [filterName, setFilterName] = useState('');
+  const [filterCategory, setFilterCategory] = useState(ALL_FILTER_VALUE);
+  const [filterSubCategory, setFilterSubCategory] = useState(ALL_FILTER_VALUE);
+  const [filterIncludeDisabled, setFilterIncludeDisabled] = useState(false);
 
+  //Category modal
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [newCategoryData, setNewCategoryData] = useState({ name: '' });
+  const [isSubmittingCategory, setIsSubmittingCategory] = useState(false);
+
+  //SubCategory modal
+  const [isSubCategoryModalOpen, setIsSubCategoryModalOpen] = useState(false);
+  const [newSubCategoryData, setNewSubCategoryData] = useState({ name: '', code: '' });
+  const [isSubmittingSubCategory, setIsSubmittingSubCategory] = useState(false);
 
   const fetchAccounts = useCallback(async () => {
     setIsLoading(true);
@@ -242,6 +254,70 @@ export const AccountManagementView: React.FC = () => {
     }
   }, [journalQuery.startDate, journalQuery.endDate, journalQuery.refContains, isJournalModalOpen, viewingAccountDetails?.id]);
 
+  const handleOpenCategoryModal = () => {
+    setNewCategoryData({ name: '' });
+    setIsCategoryModalOpen(true);
+  };
+
+  const handleOpenSubCategoryModal = () => {
+    setNewSubCategoryData({ name: '', code: '' });
+    setIsSubCategoryModalOpen(true);
+  };
+
+  const handleCategorySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCategoryData.name.trim()) {
+      toast.error("Validation Error", { description: "Category name is required." });
+      return;
+    }
+    setIsSubmittingCategory(true);
+    try {
+      const response = await fetch(`${ACCOUNTS_API_URL}/categories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newCategoryData),
+      });
+      if (!response.ok) {
+        const errorData: ApiErrorResponse = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to create account category.');
+      }
+      toast.success("Category created successfully!");
+      setIsCategoryModalOpen(false);
+      fetchDropdownData(); // Refresh dropdown data
+    } catch (err) {
+      toast.error("Save Failed", { description: (err as Error).message });
+    } finally {
+      setIsSubmittingCategory(false);
+    }
+  };
+
+  const handleSubCategorySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSubCategoryData.name.trim()) {
+      toast.error("Validation Error", { description: "Subcategory name is required." });
+      return;
+    }
+    setIsSubmittingSubCategory(true);
+    try {
+      const response = await fetch(`${ACCOUNTS_API_URL}/subcategories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSubCategoryData),
+      });
+      if (!response.ok) {
+        const errorData: ApiErrorResponse = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to create account subcategory.');
+      }
+      toast.success("Subcategory created successfully!");
+      setIsSubCategoryModalOpen(false);
+      fetchDropdownData(); // Refresh dropdown data
+    } catch (err) {
+      toast.error("Save Failed", { description: (err as Error).message });
+    } finally {
+      setIsSubmittingSubCategory(false);
+    }
+  };
+
 
   return (
     <Card>
@@ -264,21 +340,51 @@ export const AccountManagementView: React.FC = () => {
                 </div>
                 <div className="space-y-1">
                     <Label htmlFor="filter-account-category">Category</Label>
-                    <Select value={filterCategory} onValueChange={setFilterCategory}>
+                    <Select 
+                      value={filterCategory} 
+                      onValueChange={(val) => {
+                        if (val === ADD_NEW_CATEGORY_VALUE) {
+                          handleOpenCategoryModal();
+                        } else {
+                          setFilterCategory(val)
+                        }
+                      }}>
                         <SelectTrigger id="filter-account-category"><SelectValue placeholder="All Categories" /></SelectTrigger>
                         <SelectContent>
                             <SelectItem value={ALL_FILTER_VALUE}>All Categories</SelectItem>
                             {categories.map(cat => <SelectItem key={cat.id} value={String(cat.id)}>{cat.name}</SelectItem>)}
+                            <Separator />
+                            <SelectItem value={ADD_NEW_CATEGORY_VALUE} className="text-primary focus:text-primary/90">
+                                <div className="flex items-center">
+                                    <PlusCircle className="mr-2 h-4 w-4" />
+                                    <span>Add new category...</span>
+                                </div>
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className="space-y-1">
                     <Label htmlFor="filter-account-subcategory">Subcategory</Label>
-                    <Select value={filterSubCategory} onValueChange={setFilterSubCategory}>
+                    <Select 
+                      value={filterSubCategory} 
+                      onValueChange={(val) => {
+                        if (val === ADD_NEW_SUBCATEGORY_VALUE) {
+                            handleOpenSubCategoryModal();
+                        } else {
+                          setFilterSubCategory(val);
+                        }
+                      }}>
                         <SelectTrigger id="filter-account-subcategory"><SelectValue placeholder="All Subcategories" /></SelectTrigger>
                         <SelectContent>
                             <SelectItem value={ALL_FILTER_VALUE}>All Subcategories</SelectItem>
                             {subCategories.map(sub => <SelectItem key={sub.id} value={String(sub.id)}>{sub.name}</SelectItem>)}
+                            <Separator />
+                            <SelectItem value={ADD_NEW_SUBCATEGORY_VALUE} className="text-primary focus:text-primary/90">
+                                <div className="flex items-center">
+                                    <PlusCircle className="mr-2 h-4 w-4" />
+                                    <span>Add new subcategory...</span>
+                                </div>
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -353,20 +459,52 @@ export const AccountManagementView: React.FC = () => {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="acc-category" className="text-right">Category*</Label>
-              <Select value={String(formData.categoryID || '')} onValueChange={(val) => handleFormChange('categoryID', parseInt(val, 10))}>
-                <SelectTrigger className="col-span-3"><SelectValue placeholder="Select category" /></SelectTrigger>
-                <SelectContent>{categories.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>)}</SelectContent>
-              </Select>
+              <Select
+                  value={String(formData.categoryID || '')}
+                  onValueChange={(val) => {
+                      if (val === ADD_NEW_CATEGORY_VALUE) {
+                          handleOpenCategoryModal();
+                      } else {
+                          handleFormChange('categoryID', parseInt(val, 10));
+                      }
+                  }}>
+                  <SelectTrigger className="col-span-3"><SelectValue placeholder="Select category" /></SelectTrigger>
+                  <SelectContent>
+                      {categories.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>)}
+                      <Separator />
+                      <SelectItem value={ADD_NEW_CATEGORY_VALUE} className="text-primary focus:text-primary/90">
+                          <div className="flex items-center">
+                              <PlusCircle className="mr-2 h-4 w-4" />
+                              <span>Add new category...</span>
+                          </div>
+                      </SelectItem>
+                  </SelectContent>
+                </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="acc-subcategory" className="text-right">Subcategory</Label>
-              <Select value={String(formData.subCategoryID || NONE_SELECT_VALUE)} onValueChange={(val) => handleFormChange('subCategoryID', val === NONE_SELECT_VALUE ? null : parseInt(val, 10))}>
-                <SelectTrigger className="col-span-3"><SelectValue placeholder="Select subcategory (optional)" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={NONE_SELECT_VALUE}>None</SelectItem>
-                  {subCategories.map(s => <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <Select
+                  value={String(formData.subCategoryID || NONE_SELECT_VALUE)}
+                  onValueChange={(val) => {
+                      if (val === ADD_NEW_SUBCATEGORY_VALUE) {
+                          handleOpenSubCategoryModal();
+                      } else {
+                          handleFormChange('subCategoryID', val === NONE_SELECT_VALUE ? null : parseInt(val, 10));
+                      }
+                  }}>
+                  <SelectTrigger className="col-span-3"><SelectValue placeholder="Select subcategory (optional)" /></SelectTrigger>
+                  <SelectContent>
+                      <SelectItem value={NONE_SELECT_VALUE}>None</SelectItem>
+                      {subCategories.map(s => <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>)}
+                      <Separator />
+                      <SelectItem value={ADD_NEW_SUBCATEGORY_VALUE} className="text-primary focus:text-primary/90">
+                          <div className="flex items-center">
+                              <PlusCircle className="mr-2 h-4 w-4" />
+                              <span>Add new subcategory...</span>
+                          </div>
+                      </SelectItem>
+                  </SelectContent>
+                </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="acc-normalBalance" className="text-right">Normal Balance*</Label>
@@ -477,6 +615,54 @@ export const AccountManagementView: React.FC = () => {
                 <DialogFooter className="mt-auto pt-4 border-t">
                     <Button variant="outline" onClick={() => setIsJournalModalOpen(false)}>Close</Button>
                 </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        {/* Add Category Modal */}
+        <Dialog open={isCategoryModalOpen} onOpenChange={setIsCategoryModalOpen}>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Add New Account Category</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleCategorySubmit} className="space-y-4 py-2">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="cat-name" className="text-right">Name*</Label>
+                    <Input id="cat-name" value={newCategoryData.name} onChange={(e) => setNewCategoryData({ name: e.target.value })} className="col-span-3" required disabled={isSubmittingCategory} />
+                    </div>
+                    <DialogFooter>
+                    <DialogClose asChild><Button type="button" variant="outline" disabled={isSubmittingCategory}>Cancel</Button></DialogClose>
+                    <Button type="submit" disabled={isSubmittingCategory}>
+                        {isSubmittingCategory && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Create Category
+                    </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+      
+        {/* Add SubCategory Modal */}
+        <Dialog open={isSubCategoryModalOpen} onOpenChange={setIsSubCategoryModalOpen}>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Add New Account Subcategory</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubCategorySubmit} className="space-y-4 py-2">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="subcat-code" className="text-right">Code</Label>
+                        <Input id="subcat-code" value={newSubCategoryData.code} onChange={(e) => setNewSubCategoryData(prev => ({ ...prev, code: e.target.value }))} className="col-span-3" placeholder="Optional code" disabled={isSubmittingSubCategory} />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="subcat-name" className="text-right">Name*</Label>
+                        <Input id="subcat-name" value={newSubCategoryData.name} onChange={(e) => setNewSubCategoryData(prev => ({ ...prev, name: e.target.value }))} className="col-span-3" required disabled={isSubmittingSubCategory} />
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild><Button type="button" variant="outline" disabled={isSubmittingSubCategory}>Cancel</Button></DialogClose>
+                        <Button type="submit" disabled={isSubmittingSubCategory}>
+                            {isSubmittingSubCategory && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Create Subcategory
+                        </Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
     </Card>

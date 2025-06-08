@@ -13,5 +13,7 @@ public interface IAccountService
     Task<bool> SoftDeleteAccountAsync(int id);
     Task<bool> AccountExistsAsync(int id);
     Task<IEnumerable<AccountCategoryReadDto>> GetAllAccountCategoriesAsync(); 
-    Task<IEnumerable<AccountSubCategoryReadDto>> GetAllAccountSubCategoriesAsync(); 
+    Task<IEnumerable<AccountSubCategoryReadDto>> GetAllAccountSubCategoriesAsync();
+    Task<AccountCategoryReadDto?> CreateAccountCategoryAsync(AccountCategoryWriteDto categoryDto);
+    Task<AccountSubCategoryReadDto?> CreateAccountSubCategoryAsync(AccountSubCategoryWriteDto subCategoryDto);
 }

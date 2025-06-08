@@ -1,6 +1,7 @@
 ﻿using ECommerce.Server.Data;
 using ECommerce.Server.Data.DTO.Request;
 using ECommerce.Server.Data.DTO.Response;
+using ECommerce.Server.Data.Entities;
 using ECommerce.Server.Data.Entities.ECommerce.Server.Data.Entities;
 using ECommerce.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -295,6 +296,58 @@ namespace ECommerce.Server.Services
         public async Task<bool> AccountExistsAsync(int id)
         {
             return await _context.Accounts.AnyAsync(e => e.ID == id);
+        }
+
+        public async Task<AccountCategoryReadDto?> CreateAccountCategoryAsync(AccountCategoryWriteDto categoryDto)
+        {
+            if (await _context.AccountCategories.AnyAsync(c => c.Name == categoryDto.Name))
+            {
+                _logger.LogWarning("Attempted to create duplicate account category with name: {Name}", categoryDto.Name);
+                return null;
+            }
+
+            var category = new AccountCategory
+            {
+                Name = categoryDto.Name
+            };
+
+            _context.AccountCategories.Add(category);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Created new account category with ID {ID}", category.ID);
+
+            return new AccountCategoryReadDto
+            {
+                ID = category.ID,
+                Name = category.Name
+            };
+        }
+
+        public async Task<AccountSubCategoryReadDto?> CreateAccountSubCategoryAsync(AccountSubCategoryWriteDto subCategoryDto)
+        {
+            if (await _context.AccountSubCategories.AnyAsync(sc => sc.Name == subCategoryDto.Name))
+            {
+                _logger.LogWarning("Attempted to create duplicate account subcategory with name: {Name}", subCategoryDto.Name);
+                return null;
+            }
+
+            var subCategory = new AccountSubCategory
+            {
+                Code = subCategoryDto.Code,
+                Name = subCategoryDto.Name
+            };
+
+            _context.AccountSubCategories.Add(subCategory);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Created new account subcategory with ID {ID}", subCategory.ID);
+
+            return new AccountSubCategoryReadDto
+            {
+                ID = subCategory.ID,
+                Code = subCategory.Code,
+                Name = subCategory.Name
+            };
         }
     }
 }

@@ -45,12 +45,47 @@ namespace ECommerce.Server.Controllers
             return Ok(categories);
         }
 
+        // POST: api/accounts/categories
+        [HttpPost("categories")]
+        public async Task<ActionResult<AccountCategoryReadDto>> PostAccountCategory([FromBody] AccountCategoryWriteDto categoryDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _logger.LogInformation("Attempting to create account category with name: {Name}", categoryDto.Name);
+            var createdCategory = await _accountService.CreateAccountCategoryAsync(categoryDto);
+            if (createdCategory == null)
+            {
+                _logger.LogWarning("Failed to create account category with name: {Name}. It might already exist.", categoryDto.Name);
+                return Conflict(new { message = $"An account category with the name '{categoryDto.Name}' may already exist." });
+            }
+            return CreatedAtAction(nameof(GetAccountCategories), new { }, createdCategory);
+        }
+
         // GET: api/accounts/subcategories
         [HttpGet("subcategories")]
         public async Task<ActionResult<IEnumerable<AccountSubCategoryReadDto>>> GetAccountSubCategories()
         {
             var subCategories = await _accountService.GetAllAccountSubCategoriesAsync();
             return Ok(subCategories);
+        }
+        // POST: api/accounts/subcategories
+        [HttpPost("subcategories")]
+        public async Task<ActionResult<AccountSubCategoryReadDto>> PostAccountSubCategory([FromBody] AccountSubCategoryWriteDto subCategoryDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _logger.LogInformation("Attempting to create account subcategory with name: {Name}", subCategoryDto.Name);
+            var createdSubCategory = await _accountService.CreateAccountSubCategoryAsync(subCategoryDto);
+            if (createdSubCategory == null)
+            {
+                _logger.LogWarning("Failed to create account subcategory with name: {Name}. It might already exist.", subCategoryDto.Name);
+                return Conflict(new { message = $"An account subcategory with the name '{subCategoryDto.Name}' may already exist." });
+            }
+            return CreatedAtAction(nameof(GetAccountSubCategories), new { }, createdSubCategory);
         }
 
         // GET: api/accounts/{id}
