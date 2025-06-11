@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using ECommerce.Server.Data.Entities.ECommerce.Server.Data.Entities;
 using ECommerce.Server.Data.Views;
+using ECommerce.Server.Data.DTO.Response;
 
 namespace ECommerce.Server.Data
 {
@@ -29,6 +30,7 @@ namespace ECommerce.Server.Data
         public DbSet<Account> Accounts { get; set; }
         public DbSet<AccountCategory> AccountCategories { get; set; }
         public DbSet<AccountSubCategory> AccountSubCategories { get; set; }
+        public DbSet<SalesPerformanceByItemDto> SalesPerformanceByItem { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         { 
             base.OnModelCreating(modelBuilder);
@@ -308,6 +310,7 @@ namespace ECommerce.Server.Data
                     .IsRequired()
                     .HasMaxLength(100);
             });
+            modelBuilder.Entity<SalesPerformanceByItemDto>().HasNoKey();
         }
     }
 }

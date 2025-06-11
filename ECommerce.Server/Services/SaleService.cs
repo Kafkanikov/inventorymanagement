@@ -16,17 +16,19 @@ namespace ECommerce.Server.Services
         private readonly EcommerceDbContext _context;
         private readonly IInventoryLogService _inventoryLogService;
         private readonly IJournalService _journalService;
+        private readonly ILogger<SaleService> _logger;
 
         private const string CASH = "1111020100"; 
         private const string SALES_REVENUE_ACCOUNT_NUMBER = "5000020000";     
         private const string COGS_ACCOUNT_NUMBER = "6000020000";              
         private const string INVENTORY_ACCOUNT_NUMBER = "2100020000";
 
-        public SaleService(EcommerceDbContext context, IInventoryLogService inventoryLogService, IJournalService journalService)
+        public SaleService(EcommerceDbContext context, IInventoryLogService inventoryLogService, IJournalService journalService, ILogger<SaleService> logger)
         {
             _context = context;
             _inventoryLogService = inventoryLogService;
             _journalService = journalService;
+            _logger = logger; 
         }
         private async Task<decimal?> GetCurrentWeightedAverageCostPerBaseUnitAsync(int itemId)
         {
@@ -439,6 +441,17 @@ namespace ECommerce.Server.Services
         public async Task<bool> SaleExistsAsync(int saleId)
         {
             return await _context.Sales.AnyAsync(e => e.ID == saleId);
+        }
+
+        public async Task<IEnumerable<SalesPerformanceByItemDto>> GetSalesPerformanceByItemReportAsync(DateTime startDate, DateTime endDate)
+        {
+           _logger.LogInformation("Generating Sales Performance By Item Report from {StartDate} to {EndDate}", startDate, endDate);
+
+            var reportData = await _context.SalesPerformanceByItem
+                .FromSqlInterpolated($"SELECT * FROM dbo.GetSalesPerformanceByItem({startDate}, {endDate})")
+                .ToListAsync();
+
+            return reportData;
         }
     }
 }

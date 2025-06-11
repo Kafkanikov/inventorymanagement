@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using System; // For Math.Ceiling
+using System;
+using System.ComponentModel.DataAnnotations; // For Math.Ceiling
 
 namespace ECommerce.Server.Controllers
 {
@@ -17,10 +18,11 @@ namespace ECommerce.Server.Controllers
     public class SalesController : ControllerBase
     {
         private readonly ISaleService _saleService;
-
-        public SalesController(ISaleService saleService)
+        private readonly ILogger<SalesController> _logger;
+        public SalesController(ISaleService saleService, ILogger<SalesController> logger)
         {
             _saleService = saleService;
+            _logger = logger;
         }
 
         // GET: api/Sales
@@ -91,6 +93,21 @@ namespace ECommerce.Server.Controllers
                 return NotFound(new { message = $"Sale with ID {id} not found or could not be disabled." });
             }
             return NoContent();
+        }
+        [HttpGet("sales-performance-by-item")]
+        public async Task<ActionResult<IEnumerable<SalesPerformanceByItemDto>>> GetSalesPerformanceByItemReport(
+            [FromQuery, Required] DateTime startDate,
+            [FromQuery, Required] DateTime endDate)
+        {
+            if (startDate > endDate)
+            {
+                return BadRequest(new { message = "Start date cannot be after end date." });
+            }
+
+            _logger.LogInformation("Received request for Sales Performance By Item Report from {StartDate} to {EndDate}", startDate, endDate);
+            var reportData = await _saleService.GetSalesPerformanceByItemReportAsync(startDate, endDate);
+
+            return Ok(reportData);
         }
     }
 }

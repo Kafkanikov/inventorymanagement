@@ -14,5 +14,8 @@ namespace ECommerce.Server.Services
         Task<(IEnumerable<SaleReadDto> Sales, int TotalCount)> GetAllSalesAsync(SaleQueryParameters queryParams);
         Task<bool> SoftDeleteSaleAsync(int saleId); 
         Task<bool> SaleExistsAsync(int saleId);
+
+        Task<IEnumerable<SalesPerformanceByItemDto>> GetSalesPerformanceByItemReportAsync(DateTime startDate,
+            DateTime endDate);
     }
 }
