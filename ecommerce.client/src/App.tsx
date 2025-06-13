@@ -24,6 +24,8 @@ import { ThemeProvider } from './contexts/theme-provider';
 import { JournalLedgerView } from './components/dashboard/views/JournalLedgerView';
 import { ProfitLossView } from './components/dashboard/reports/ProfitLossView';
 import { AccountManagementView } from './components/dashboard/views/AccountManagementView';
+import { MainDashboard } from './components/dashboard/views/MainDashboard';
+import { CurrencyExchangeView } from './components/dashboard/views/CurrencyExchangeView';
 
 function AppContent() {
     const { isAuthenticated, isLoading, user } = useAuth();
@@ -135,7 +137,7 @@ function AppContent() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate to="inventory" replace />} />
+            <Route index element={<MainDashboard />} />
             <Route path="inventory" element={<InventoryLogView />} />
             <Route path="purchases" element={<PurchaseView />} />
             <Route path="sales" element={<SaleView />} />
@@ -146,6 +148,7 @@ function AppContent() {
             <Route path="finance" element={<Outlet/>}> 
               <Route path="journal" element={<JournalLedgerView />} />
               <Route path="accounts" element={<AccountManagementView />} />
+              <Route path="currency-exchange" element={<CurrencyExchangeView/>} />
             </Route>
             <Route path="add" element={<Outlet/>}> 
               <Route path="item" element={<ItemManagementForm />} />

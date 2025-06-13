@@ -19,7 +19,7 @@ namespace ECommerce.Server.Data.DTO.Request
 
         [Required]
         [StringLength(10)]
-        [RegularExpression("^(Debit|Credit)$", ErrorMessage = "Normal Balance must be 'Debit' or 'Credit'.")]
+        [RegularExpression("^(debit|credit)$", ErrorMessage = "Normal Balance must be 'Debit' or 'Credit'.")]
         public string NormalBalance { get; set; } 
 
         public bool Disabled { get; set; } = false; // For updates, create will default to false

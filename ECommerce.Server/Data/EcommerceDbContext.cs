@@ -31,6 +31,7 @@ namespace ECommerce.Server.Data
         public DbSet<AccountCategory> AccountCategories { get; set; }
         public DbSet<AccountSubCategory> AccountSubCategories { get; set; }
         public DbSet<SalesPerformanceByItemDto> SalesPerformanceByItem { get; set; }
+        public DbSet<CurrencyExchange> CurrencyExchanges { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         { 
             base.OnModelCreating(modelBuilder);
@@ -311,6 +312,15 @@ namespace ECommerce.Server.Data
                     .HasMaxLength(100);
             });
             modelBuilder.Entity<SalesPerformanceByItemDto>().HasNoKey();
+            modelBuilder.Entity<CurrencyExchange>(entity =>
+            {
+                entity.ToTable("CurrencyExchange");
+                entity.HasKey(e => e.ID);
+                entity.HasOne(d => d.User)
+                    .WithMany() // Or specific collection if User has one for Sales
+                    .HasForeignKey(d => d.UserID)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
         }
     }
 }

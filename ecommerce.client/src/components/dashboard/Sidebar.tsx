@@ -23,7 +23,8 @@ import {
   NotebookPenIcon, // Added new icon
   Scale3D,
   TrendingUp,
-  Currency
+  Currency,
+  DollarSignIcon
   // CurrencyIcon, // Not used in the provided code, can be removed if not needed
   // Ban // Not used in the provided code, can be removed if not needed
 } from 'lucide-react';
@@ -141,6 +142,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             "grid items-start py-2 text-sm font-medium gap-0.5",
             isExpanded ? "px-2 lg:px-4" : "px-1.5"
           )}>
+          <NavItem to="/dashboard" icon={LayoutDashboard} label="Dashboard" isExpanded={isExpanded} exact={true}/>
           <NavItem to="/dashboard/inventory" icon={Boxes} label="Inventory & Stock" isExpanded={isExpanded}/>
           <NavItem to="/dashboard/purchases" icon={ShoppingCart} label="Purchases" isExpanded={isExpanded}/>
           <NavItem to="/dashboard/sales" icon={BanknoteArrowUpIcon} label="Sales" isExpanded={isExpanded}/>
@@ -185,6 +187,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
               <CollapsibleContent className="space-y-0.5 pt-1 animate-in fade-in-50 zoom-in-95">
                 <NavItem to="/dashboard/finance/journal" icon={NotebookPenIcon} label="Journal Ledger" isSubItem isExpanded={isExpanded} exact={true} />
                 <NavItem to="/dashboard/finance/accounts" icon={Currency} label="Accounts" isSubItem isExpanded={isExpanded} exact={true} />
+                <NavItem to="/dashboard/finance/currency-exchange" icon={DollarSignIcon} label="Currency Exchange" isSubItem isExpanded={isExpanded} exact={true} />
               </CollapsibleContent>
             )}
           </Collapsible>

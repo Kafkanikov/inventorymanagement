@@ -289,8 +289,8 @@ export const JournalLedgerView: React.FC = () => {
                       <TableCell className="text-xs">{page.source}</TableCell>
                       <TableCell className="text-xs max-w-xs truncate" title={page.description ?? undefined}>{page.description || '-'}</TableCell>
                       <TableCell className="text-xs">{page.username || (page.userId ? `ID: ${page.userId}`: '-')}</TableCell>
-                      <TableCell className="text-right text-xs">{formatCurrency(page.totalDebits, '$')}</TableCell>
-                      <TableCell className="text-right text-xs">{formatCurrency(page.totalCredits, '$')}</TableCell>
+                      <TableCell className="text-right text-xs">{page.totalDebits}</TableCell>
+                      <TableCell className="text-right text-xs">{page.totalCredits}</TableCell>
                       <TableCell className="text-xs">{page.disabled ? "Disabled" : (page.isBalanced ? "Balanced" : "Unbalanced")}</TableCell>
                     </TableRow>
                     {expandedPageIds.has(page.id) && (
@@ -317,8 +317,8 @@ export const JournalLedgerView: React.FC = () => {
                                       <TableCell>{entry.accountName}</TableCell>
                                       <TableCell>{entry.ref || '-'}</TableCell>
                                       <TableCell className="max-w-[200px] truncate" title={entry.description ?? undefined}>{entry.description || '-'}</TableCell>
-                                      <TableCell className="text-right">{entry.debit !== 0 ? formatCurrency(entry.debit, '$') : '-'}</TableCell>
-                                      <TableCell className="text-right">{entry.credit !== 0 ? formatCurrency(entry.credit, '$') : '-'}</TableCell>
+                                      <TableCell className="text-right">{entry.debit !== 0 ? entry.debit : '-'}</TableCell>
+                                      <TableCell className="text-right">{entry.credit !== 0 ? entry.credit : '-'}</TableCell>
                                     </TableRow>
                                   ))}
                                 </TableBody>

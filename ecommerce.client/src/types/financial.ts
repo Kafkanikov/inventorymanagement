@@ -165,7 +165,7 @@ export interface AccountRead {
   categoryName: string;
   subCategoryID?: number | null;
   subCategoryName?: string | null;
-  normalBalance: 'Debit' | 'Credit'; 
+  normalBalance: 'debit' | 'credit'; 
   disabled: boolean;
 }
 
@@ -174,7 +174,7 @@ export interface AccountWrite {
   name: string;
   categoryID: number;
   subCategoryID?: number | null;
-  normalBalance: 'Debit' | 'Credit';
+  normalBalance: 'debit' | 'credit';
   disabled?: boolean; // Optional for create, used in update
 }
 
@@ -222,9 +222,28 @@ export interface JournalPageCreate {
   journalEntries: JournalPostCreate[];
 }
 
-// For Account selection in the form
 export interface AccountSelection {
   id: number;
   accountNumber: string; 
   name: string;
+}
+
+export interface CurrencyExchangeWrite {
+    exchangeOption: 'USDtoKHR' | 'KHRtoUSD';
+    bankLocation: string;
+    rate: number;
+    fromAmount: number;
+    description: string;
+}
+
+export interface CurrencyExchangeRead {
+    id: number;
+    timestamp: string;
+    username: string;
+    exchangeOption: 'USDtoKHR' | 'KHRtoUSD';
+    fromAmount: number;
+    toAmount: number;
+    rate: number;
+    description: string;
+    disabled: boolean;
 }

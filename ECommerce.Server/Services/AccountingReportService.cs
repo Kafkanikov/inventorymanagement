@@ -81,11 +81,11 @@ namespace ECommerce.Server.Services
                 decimal nativeBalance;
                 // Important: Expense accounts typically have a DEBIT normal balance.
                 // Income accounts typically have a CREDIT normal balance.
-                if (acc.NormalBalance?.Equals("Debit", StringComparison.OrdinalIgnoreCase) == true)
+                if (acc.NormalBalance?.Equals("debit", StringComparison.OrdinalIgnoreCase) == true)
                 {
                     nativeBalance = debits - credits;
                 }
-                else if (acc.NormalBalance?.Equals("Credit", StringComparison.OrdinalIgnoreCase) == true)
+                else if (acc.NormalBalance?.Equals("credit", StringComparison.OrdinalIgnoreCase) == true)
                 {
                     nativeBalance = credits - debits;
                 }
@@ -142,7 +142,7 @@ namespace ECommerce.Server.Services
                     {
                         AccountNumber = acc.AccountNumber,
                         AccountName = acc.Name,
-                        BalanceNative = nativeBalance,
+                        BalanceNative = nativeBalance, 
                         CurrencySymbolNative = nativeCurrencySymbol,
                         BalanceInReportCurrency = balanceInReportCurrency
                     }
@@ -189,11 +189,11 @@ namespace ECommerce.Server.Services
                 SubGroupName = "Profit or Loss Current Year",
                 Accounts = new List<BalanceSheetAccountDto>
                 {
-                    new BalanceSheetAccountDto
+                    new()
                     {
-                        AccountNumber = "4081020000", 
+                        AccountNumber = "4081020000",
                         AccountName = $"Profit Current Year: USD",
-                        BalanceNative = report.NetProfitOrLoss, 
+                        BalanceNative = report.NetProfitOrLoss,
                         CurrencySymbolNative = report.ReportingCurrencySymbol,
                         BalanceInReportCurrency = report.NetProfitOrLoss
                     }
@@ -341,7 +341,7 @@ namespace ECommerce.Server.Services
                 decimal tbDebitAmount = 0;
                 decimal tbCreditAmount = 0;
 
-                if (acc.NormalBalance?.Equals("Debit", StringComparison.OrdinalIgnoreCase) == true)
+                if (acc.NormalBalance?.Equals("debit", StringComparison.OrdinalIgnoreCase) == true)
                 {
                     if (netBalanceInReportCurrency >= 0) // Normal debit balance or zero
                     {
@@ -352,7 +352,7 @@ namespace ECommerce.Server.Services
                         tbCreditAmount = Math.Abs(netBalanceInReportCurrency);
                     }
                 }
-                else if (acc.NormalBalance?.Equals("Credit", StringComparison.OrdinalIgnoreCase) == true)
+                else if (acc.NormalBalance?.Equals("credit", StringComparison.OrdinalIgnoreCase) == true)
                 {
                     if (netBalanceInReportCurrency <= 0) // Normal credit balance or zero
                     {

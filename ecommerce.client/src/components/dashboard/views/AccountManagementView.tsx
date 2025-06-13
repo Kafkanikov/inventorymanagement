@@ -137,7 +137,7 @@ export const AccountManagementView: React.FC = () => {
           normalBalance: account.normalBalance,
           disabled: account.disabled,
         }
-      : { normalBalance: 'Debit', disabled: false } // Default for new
+      : { normalBalance: 'debit', disabled: false } // Default for new
     );
     setIsModalOpen(true);
   };
@@ -508,11 +508,11 @@ export const AccountManagementView: React.FC = () => {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="acc-normalBalance" className="text-right">Normal Balance*</Label>
-              <Select value={formData.normalBalance || 'Debit'} onValueChange={(val) => handleFormChange('normalBalance', val as 'Debit' | 'Credit')}>
+              <Select value={formData.normalBalance || 'debit'} onValueChange={(val) => handleFormChange('normalBalance', val as 'debit' | 'credit')}>
                 <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Debit">Debit</SelectItem>
-                  <SelectItem value="Credit">Credit</SelectItem>
+                  <SelectItem value="debit">debit</SelectItem>
+                  <SelectItem value="credit">credit</SelectItem>
                 </SelectContent>
               </Select>
             </div>

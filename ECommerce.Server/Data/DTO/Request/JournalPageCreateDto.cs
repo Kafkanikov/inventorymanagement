@@ -6,7 +6,7 @@ namespace ECommerce.Server.Data.DTO.Request
 {
     public class JournalPageCreateDto
     {
-        public int? CurrencyID { get; set; } // Optional, if you have a currencies table
+        public int? CurrencyID { get; set; } = 1; // Optional, if you have a currencies table
 
         [StringLength(50)]
         public string? Ref { get; set; } // Overall reference for the journal page

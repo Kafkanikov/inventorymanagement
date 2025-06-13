@@ -62,6 +62,7 @@ builder.Services.AddScoped<IStockQueryService, StockQueryService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
 builder.Services.AddScoped<IAccountingReportService, AccountingReportService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICurrencyExchangeService, CurrencyExchangeService>();
 
 builder.Services.AddOpenApi();
 

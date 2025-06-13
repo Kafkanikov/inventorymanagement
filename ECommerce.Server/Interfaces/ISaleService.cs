@@ -17,5 +17,7 @@ namespace ECommerce.Server.Services
 
         Task<IEnumerable<SalesPerformanceByItemDto>> GetSalesPerformanceByItemReportAsync(DateTime startDate,
             DateTime endDate);
+        Task<IEnumerable<DailySaleDto>> GetDailySalesAsync(DateTime startDate,
+            DateTime endDate);
     }
 }

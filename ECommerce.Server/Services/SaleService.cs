@@ -453,5 +453,24 @@ namespace ECommerce.Server.Services
 
             return reportData;
         }
+
+        public async Task<IEnumerable<DailySaleDto>> GetDailySalesAsync(DateTime startDate, DateTime endDate)
+        {
+            var start = startDate.Date;
+            var end = endDate.Date.AddDays(1);
+
+            var dailySales = await _context.Sales
+                .Where(s => s.Date >= start && s.Date < end && !s.Disabled)
+                .GroupBy(s => s.Date.Value)
+                .Select(g => new DailySaleDto
+                {
+                    Date = g.Key,
+                    TotalRevenue = g.Sum(s => s.Price)
+                })
+                .OrderBy(ds => ds.Date)
+                .ToListAsync();
+
+            return dailySales;
+        }
     }
 }

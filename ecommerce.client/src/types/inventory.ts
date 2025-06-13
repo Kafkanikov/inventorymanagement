@@ -401,4 +401,14 @@ export interface GenericCrudProps<
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
+export interface SalesPerformance {
+    totalRevenue: number;
+    totalCOGS: number;
+    totalProfit: number;
+    totalUnitsSold: number;
+}
 
+export interface DailySales {
+    date: string;
+    totalRevenue: number;
+}

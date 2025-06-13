@@ -3,56 +3,28 @@
   "WorkspaceRootPath": "D:\\Pg\\Programming\\WebDev\\ECommerce\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\controllers\\journalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\controllers\\journalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\services\\accountingreportservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\services\\accountingreportservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C5CBC310-DF12-5861-CF86-7C3B2D5F68B0}|ecommerce.client\\ecommerce.client.esproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.client\\src\\components\\dashboard\\views\\journalledgerview.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{C5CBC310-DF12-5861-CF86-7C3B2D5F68B0}|ecommerce.client\\ecommerce.client.esproj|solutionrelative:ecommerce.client\\src\\components\\dashboard\\views\\journalledgerview.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5CBC310-DF12-5861-CF86-7C3B2D5F68B0}|ecommerce.client\\ecommerce.client.esproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.client\\src\\components\\dashboard\\views\\accountmanagementview.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{C5CBC310-DF12-5861-CF86-7C3B2D5F68B0}|ecommerce.client\\ecommerce.client.esproj|solutionrelative:ecommerce.client\\src\\components\\dashboard\\views\\accountmanagementview.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\services\\currencyexchangeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\services\\currencyexchangeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\services\\accountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\services\\accountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\dto\\response\\journalpostreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\response\\journalpostreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\dto\\response\\accountsubcategoryreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\response\\accountsubcategoryreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\interfaces\\iaccountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\interfaces\\iaccountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\dto\\response\\accountcategoryreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\response\\accountcategoryreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\dto\\request\\accountjournalentryqueryparametersdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\request\\accountjournalentryqueryparametersdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\dto\\response\\accountwithjournalentriesdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\response\\accountwithjournalentriesdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\dto\\request\\accountwritedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\request\\accountwritedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\dto\\response\\accountreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\response\\accountreaddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\entities\\account.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\entities\\account.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|d:\\pg\\programming\\webdev\\ecommerce\\ecommerce.server\\data\\dto\\request\\journalpagecreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6169B5E-011D-435F-BF14-002B5443F0DE}|ECommerce.Server\\ECommerce.Server.csproj|solutionrelative:ecommerce.server\\data\\dto\\request\\journalpagecreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -115,171 +87,76 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "JournalController.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Controllers\\JournalController.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Controllers\\JournalController.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Controllers\\JournalController.cs",
-              "RelativeToolTip": "ECommerce.Server\\Controllers\\JournalController.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAAYwBYAAAAnAAAAAAAAAA==",
+              "Title": "AccountingReportService.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\AccountingReportService.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Services\\AccountingReportService.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\AccountingReportService.cs*",
+              "RelativeToolTip": "ECommerce.Server\\Services\\AccountingReportService.cs*",
+              "ViewState": "AgIAALEAAAAAAAAAAAAYwL8AAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T04:42:59.529Z",
+              "WhenOpened": "2025-06-13T01:45:02.723Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "AccountController.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Controllers\\AccountController.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Controllers\\AccountController.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Controllers\\AccountController.cs",
-              "RelativeToolTip": "ECommerce.Server\\Controllers\\AccountController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T04:03:25.986Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "JournalPostReadDto.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\JournalPostReadDto.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\DTO\\Response\\JournalPostReadDto.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\JournalPostReadDto.cs",
-              "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Response\\JournalPostReadDto.cs",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAewAwAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:44:04.68Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Program.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Program.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Program.cs",
-              "RelativeToolTip": "ECommerce.Server\\Program.cs",
-              "ViewState": "AgIAACoAAAAAAAAAAAAAAD8AAAA+AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:47:59.17Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "AccountService.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\AccountService.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Services\\AccountService.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\AccountService.cs",
-              "RelativeToolTip": "ECommerce.Server\\Services\\AccountService.cs",
-              "ViewState": "AgIAACkBAAAAAAAAAAAQwI8AAAA1AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:47:39.662Z",
+              "Title": "JournalLedgerView.tsx",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ecommerce.client\\src\\components\\dashboard\\views\\JournalLedgerView.tsx",
+              "RelativeDocumentMoniker": "ecommerce.client\\src\\components\\dashboard\\views\\JournalLedgerView.tsx",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ecommerce.client\\src\\components\\dashboard\\views\\JournalLedgerView.tsx",
+              "RelativeToolTip": "ecommerce.client\\src\\components\\dashboard\\views\\JournalLedgerView.tsx",
+              "ViewState": "AgIAAPUAAAAAAAAAAAAAAEABAABeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-06-12T18:23:49.62Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "AccountSubCategoryReadDto.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\AccountSubCategoryReadDto.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\DTO\\Response\\AccountSubCategoryReadDto.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\AccountSubCategoryReadDto.cs",
-              "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Response\\AccountSubCategoryReadDto.cs",
+              "Title": "JournalPageCreateDto.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Request\\JournalPageCreateDto.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\DTO\\Request\\JournalPageCreateDto.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Request\\JournalPageCreateDto.cs",
+              "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Request\\JournalPageCreateDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:45:58.641Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-12T18:10:27.556Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "AccountCategoryReadDto.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\AccountCategoryReadDto.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\DTO\\Response\\AccountCategoryReadDto.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\AccountCategoryReadDto.cs",
-              "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Response\\AccountCategoryReadDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:45:23.213Z",
-              "EditorCaption": ""
+              "DocumentIndex": 2,
+              "Title": "AccountManagementView.tsx",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ecommerce.client\\src\\components\\dashboard\\views\\AccountManagementView.tsx",
+              "RelativeDocumentMoniker": "ecommerce.client\\src\\components\\dashboard\\views\\AccountManagementView.tsx",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ecommerce.client\\src\\components\\dashboard\\views\\AccountManagementView.tsx",
+              "RelativeToolTip": "ecommerce.client\\src\\components\\dashboard\\views\\AccountManagementView.tsx",
+              "ViewState": "AgIAAN8BAAAAAAAAAIAwwBUCAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-06-11T07:35:45.273Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "IAccountService.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Interfaces\\IAccountService.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Interfaces\\IAccountService.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Interfaces\\IAccountService.cs",
-              "RelativeToolTip": "ECommerce.Server\\Interfaces\\IAccountService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAABUAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "AccountService.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\AccountService.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Services\\AccountService.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\AccountService.cs",
+              "RelativeToolTip": "ECommerce.Server\\Services\\AccountService.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAxwOcAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:44:27.904Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-11T07:32:58.82Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "AccountJournalEntryQueryParametersDto.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Request\\AccountJournalEntryQueryParametersDto.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\DTO\\Request\\AccountJournalEntryQueryParametersDto.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Request\\AccountJournalEntryQueryParametersDto.cs",
-              "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Request\\AccountJournalEntryQueryParametersDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "CurrencyExchangeService.cs",
+              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\CurrencyExchangeService.cs",
+              "RelativeDocumentMoniker": "ECommerce.Server\\Services\\CurrencyExchangeService.cs",
+              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Services\\CurrencyExchangeService.cs",
+              "RelativeToolTip": "ECommerce.Server\\Services\\CurrencyExchangeService.cs",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAWwFsAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:43:29.433Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "AccountWithJournalEntriesDto.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\AccountWithJournalEntriesDto.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\DTO\\Response\\AccountWithJournalEntriesDto.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\AccountWithJournalEntriesDto.cs",
-              "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Response\\AccountWithJournalEntriesDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:42:48.755Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "AccountReadDto.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\AccountReadDto.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\DTO\\Response\\AccountReadDto.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Response\\AccountReadDto.cs",
-              "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Response\\AccountReadDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:40:51.823Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "AccountWriteDto.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Request\\AccountWriteDto.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\DTO\\Request\\AccountWriteDto.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\DTO\\Request\\AccountWriteDto.cs",
-              "RelativeToolTip": "ECommerce.Server\\Data\\DTO\\Request\\AccountWriteDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAyAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:40:30.413Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Account.cs",
-              "DocumentMoniker": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\Entities\\Account.cs",
-              "RelativeDocumentMoniker": "ECommerce.Server\\Data\\Entities\\Account.cs",
-              "ToolTip": "D:\\Pg\\Programming\\WebDev\\ECommerce\\ECommerce.Server\\Data\\Entities\\Account.cs",
-              "RelativeToolTip": "ECommerce.Server\\Data\\Entities\\Account.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAQwCMAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T03:39:09.361Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-11T04:44:52.765Z"
             }
           ]
         },

@@ -109,5 +109,20 @@ namespace ECommerce.Server.Controllers
 
             return Ok(reportData);
         }
+
+        [HttpGet("daily-sales")]
+        public async Task<ActionResult<IEnumerable<DailySaleDto>>> GetDailySales([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var dailySales = await _saleService.GetDailySalesAsync(startDate, endDate);
+                return Ok(dailySales);
+            }
+            catch (Exception ex)
+            {
+                // Log exception details here if you have a logging framework
+                return StatusCode(500, "An error occurred while fetching daily sales data.");
+            }
+        }
     }
 }
