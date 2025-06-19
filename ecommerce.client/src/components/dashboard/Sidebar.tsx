@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   ShoppingCart,
-  Landmark, 
   Boxes,    
   PlusCircle,
   PackagePlus, 
@@ -17,11 +16,9 @@ import {
   User,
   Scale,
   FileSpreadsheetIcon, 
-  BookOpen,
   BanknoteArrowUpIcon,
   Banknote, // Added new icon
   NotebookPenIcon, // Added new icon
-  Scale3D,
   TrendingUp,
   Currency,
   DollarSignIcon

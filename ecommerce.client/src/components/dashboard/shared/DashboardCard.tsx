@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Collapsible } from '@/components/ui/collapsible';
 import { SalesPerformance } from '@/types/inventory';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { format as formatDate } from 'date-fns';

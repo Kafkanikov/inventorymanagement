@@ -1,7 +1,7 @@
 // src/components/dashboard/views/AccountManagementView.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter
+  Card, CardHeader, CardTitle, CardContent, CardDescription
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,14 +17,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Loader2, PlusCircle, Edit, Trash2, Eye, ListFilter, RotateCcw, Search } from 'lucide-react';
+import { Loader2, PlusCircle, Edit, Trash2, Eye, RotateCcw, Search } from 'lucide-react';
 import {
   AccountRead, AccountWrite, AccountWithJournalEntries,
   AccountCategorySelection, AccountSubCategorySelection, 
-  JournalPostData, AccountJournalEntryQueryParameters
+  AccountJournalEntryQueryParameters
 } from '@/types/financial'; 
 import { ApiErrorResponse } from '@/types/inventory';
-import { formatDateForDisplay, formatCurrency } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
 import { DatePicker } from '@/components/ui/date-picker';
 import { format, parseISO, isValid } from 'date-fns';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
