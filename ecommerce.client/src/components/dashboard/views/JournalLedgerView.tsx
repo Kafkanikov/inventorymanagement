@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { JournalPageData, JournalLedgerQueryParameters } from '@/types/financial'; // Using updated DTOs
 import { ApiErrorResponse, UserSelection } from '@/types/inventory'; // For error and base query params
 import { format, parseISO, isValid } from 'date-fns';
-import { formatCurrency, formatDateForDisplay } from '@/lib/utils'; // Assuming these exist
+import { formatDateForDisplay } from '@/lib/utils'; // Assuming these exist
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { JournalPageForm } from '../forms/JournalPageForm';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';

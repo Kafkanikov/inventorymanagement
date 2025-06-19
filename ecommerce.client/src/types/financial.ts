@@ -1,4 +1,4 @@
-import { QueryParametersBase, ApiErrorResponse } from "./inventory";
+import { QueryParametersBase } from "./inventory";
 
 export interface BalanceSheetAccount {
   accountNumber: string;

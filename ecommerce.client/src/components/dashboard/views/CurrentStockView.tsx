@@ -1,4 +1,3 @@
-// ecommerce.client/src/components/dashboard/views/CurrentStockView.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow,
@@ -15,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { Loader2, Search, RotateCcw, ChevronDown, ChevronRight, PackageSearch } from 'lucide-react';
 import { toast } from 'sonner';
-import { ItemStockReadDto, ItemStockUnitDetailDto, StockQueryParameters, Category, ApiErrorResponse } from '@/types/inventory';
+import { ItemStockReadDto, StockQueryParameters, Category, ApiErrorResponse } from '@/types/inventory';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 
