@@ -57,7 +57,7 @@ export const BalanceSheetViewInternal: React.FC<BalanceSheetViewInternalProps> =
         <Collapsible className="mt-8 pt-6 border-t no-print">
             <CollapsibleTrigger asChild>
                 <Button variant="outline" className="w-full flex justify-between items-center text-sm">
-                    <span>Show Income & Expense Details (for P/L Calculation)</span>
+                    <span>Show Income & Expense Details</span>
                     <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
                 </Button>
             </CollapsibleTrigger>

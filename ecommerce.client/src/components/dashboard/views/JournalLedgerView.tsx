@@ -216,7 +216,7 @@ export const JournalLedgerView: React.FC = () => {
             <div>
 
             </div>
-            <div className="flex space-x-2 pt-5 lg:col-span-1 justify-self-end self-end">
+            <div className="flex flex-wrap md:flex-nowrap gap-2 pt-5 lg:col-span-1 justify-self-end self-end">
             <Button onClick={handleApplyFilters} disabled={isLoading} size="sm">
                 <Search className="mr-2 h-4 w-4" /> Apply
             </Button>

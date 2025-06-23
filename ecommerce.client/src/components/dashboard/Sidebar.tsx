@@ -84,9 +84,10 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, isSubItem, exa
 
 interface SidebarProps {
   isExpanded: boolean;
+  isMobile?: boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, isMobile=false }) => {
   // Combined state for collapsible sections
   const [openCollapsibleSections, setOpenCollapsibleSections] = React.useState<Record<string, boolean>>({
     reports: false,
@@ -119,8 +120,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
 
   return (
     <aside className={cn(
-        "hidden border-r bg-muted/40 md:flex md:flex-col print:hidden transition-all duration-300 ease-in-out dark:bg-zinc-900/50",
-        isExpanded ? "md:w-60 lg:w-64" : "md:w-16"
+        isMobile 
+          ? "flex flex-col h-full bg-muted/40 border-r dark:bg-zinc-900/50" 
+          : "hidden border-r bg-muted/40 md:flex md:flex-col print:hidden transition-all duration-300 ease-in-out dark:bg-zinc-900/50",
+        !isMobile && (isExpanded ? "md:w-60 lg:w-64" : "md:w-16")
       )}>
       <div className={cn(
           "flex h-14 items-center border-b lg:h-[60px] transition-all duration-300 ease-in-out",
